@@ -1,0 +1,10 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  .main-content {
+    padding-top: 60px;  /* Ajuste del espaciado para compensar el header fijo */
+  }
+  
