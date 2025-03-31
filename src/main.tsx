@@ -8,6 +8,7 @@ import Card from './ts/Card.tsx';
 import Customization from './Personalization/customization.tsx';
 import Footer from './ts/footer.tsx';
 import Login from './Login/Login.tsx'; 
+import Categories from './Categories/Categories.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,10 +22,9 @@ createRoot(document.getElementById('root')!).render(
             <Footer />
           </>
         } />
-
         <Route path="/customization" element={<Customization />} />
-
         <Route path="/login" element={<Login />} /> 
+        <Route path="/categories" element={<Categories />} />
       </Routes>
     </Router>
   </StrictMode>

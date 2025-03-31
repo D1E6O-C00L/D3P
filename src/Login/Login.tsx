@@ -4,43 +4,55 @@ import Logo from "../assets/logo.svg"
 
 function Login() {
   return (
-    <div className="bg-gradient-to-br from-[#0c2c4c] to-[#1a4b7f] flex flex-col md:flex-row h-screen items-center justify-center px-4">
-      <div className="hidden md:flex md:w-1/2 items-center justify-center">
-        <Carousel />
-      </div>
-
-      <div className="bg-white rounded-2xl shadow-xl p-10 w-full max-w-md space-y-6">
-        <div className="flex justify-center">
-          <img src={Logo} alt="Logo de la empresa" className="w-28" />
+    <div className="bg-gradient-to-br from-[#0c2c4c] to-[#1a4b7f] flex justify-center items-center min-h-screen w-full">
+      <div className="flex flex-col md:flex-row w-[80%] rounded-xl overflow-hidden shadow-2xl">
+        <div className="w-[90%] md:w-1/2 h-64 md:h-auto">
+          <Carousel />
         </div>
 
-        <h2 className="text-2xl font-bold text-center text-[#0c2c4c]">Bienvenido</h2>
+        <div className="bg-white flex flex-col justify-between items-center text-[#1a4b7f] rounded-b-xl md:rounded-b-none md:rounded-r-xl w-[10%] p-8 md:w-1/2">
+          <div className="text-center mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Iniciar Sesión</h2>
+            <img src={Logo || "/placeholder.svg"} alt="Logo de la empresa" className="w-32 md:w-40 mx-auto my-4" />
+            <div className="text-sm md:text-base">
+              <p>¿Aún no tienes una cuenta?</p>
+              <a href="" className="underline hover:text-[#0c2c4c]">
+                Registrarse
+              </a>
+            </div>
+          </div>
 
-        <form className="space-y-4">
-          <input
-            type="email"
-            placeholder="Correo electrónico"
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0c2c4c] placeholder-gray-500"
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0c2c4c] placeholder-gray-500"
-          />
-          <button
-            type="submit"
-            className="w-full bg-[#0c2c4c] text-white py-3 rounded-md font-semibold hover:bg-[#143c66] transition"
-          >
-            Iniciar sesión
-          </button>
-        </form>
+          <div className="w-full my-6">
+            <div className="space-y-6">
+              <input
+                name="usuario"
+                id="usuario"
+                placeholder="Usuario"
+                className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
+              />
+              <input
+                name="password"
+                id="password"
+                type="password"
+                placeholder="Contraseña"
+                className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
+              />
+            </div>
+          </div>
 
-        <p className="text-sm text-center text-gray-600">
-          ¿No tienes una cuenta? <a href="#" className="text-[#0c2c4c] font-medium hover:underline">Regístrate</a>
-        </p>
+          <div className="text-center">
+            <button className="bg-[#dbe4e5] hover:bg-[#bbbbc3] w-full max-w-xs text-[#1a4b7f] rounded-xl p-2 px-4 mb-4 font-semibold text-xl transition-colors">
+              Entrar
+            </button>
+            <a href="" className="text-sm md:text-base underline hover:text-[#0c2c4c]">
+              ¿Olvidaste tu contraseña?
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   )
 }
 
 export default Login
+
