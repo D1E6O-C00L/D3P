@@ -16,7 +16,7 @@ function Card() {
   const navigate = useNavigate();
 
   const handleButtonClick = () => {
-    navigate("/customization");
+    navigate("/selection");
   };
   const cards1 = [
 

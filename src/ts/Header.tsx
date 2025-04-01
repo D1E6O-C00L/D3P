@@ -1,6 +1,7 @@
 import logo from "../assets/logo.svg";
 import Icono from "../assets/ICONO USUARIO.svg";
 import { Link } from "react-router-dom";
+import { ShoppingBag } from "lucide-react";
 
 function Header() {
   return (
@@ -10,7 +11,7 @@ function Header() {
         <img src={logo} alt="Logo" />
       </div>
 
-      {/* Menú de navegación */}
+      {/* Navegación */}
       <div className="flex-grow flex justify-center">
         <div className="px-2 py-1 rounded-lg">
           <ul className="flex gap-8 text-sm sm:text-base md:text-lg lg:text-xl font-bold uppercase">
@@ -33,12 +34,19 @@ function Header() {
         </div>
       </div>
 
-      {/* Icono de usuario */}
-      <div className="flex-none w-12 md:w-24 lg:w-32 flex justify-end">
+      
+      <div className="flex items-center gap-4">
+        
+        <Link to="/carrito">
+          <ShoppingBag className="w-8 h-8 md:w-10 md:h-10 cursor-pointer hover:opacity-80 transition" />
+        </Link>
+
+        
         <Link to="/Login">
           <img
             src={Icono}
-            className="w-16 h-16 cursor-pointer hover:opacity-80 transition"
+            className="w-10 h-10 md:w-12 md:h-12 cursor-pointer hover:opacity-80 transition"
+            alt="Usuario"
           />
         </Link>
       </div>
