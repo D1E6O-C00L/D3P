@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaCoffee, FaTshirt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 
 type IconType = "coffee" | "tshirt" | null;
 
@@ -17,6 +18,15 @@ function Iconos() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 flex flex-col justify-center items-center p-4">
+      {/* Flecha para regresar en la parte superior izquierda */}
+      <Link
+        to="/"
+        className="absolute top-4 left-4 flex items-center text-white hover:text-gray-300 transition"
+      >
+        <ArrowLeft className="h-6 w-6 mr-2" />
+        <span className="font-medium">Regresar</span>
+      </Link>
+
       <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mb-12 md:mb-20 lg:mb-35 px-4 max-w-4xl">
         Seleccione el producto de su preferencia
       </h2>
