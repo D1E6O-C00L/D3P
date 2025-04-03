@@ -1,7 +1,6 @@
-import logo from "../assets/logo.svg";
-import Icono from "../assets/ICONO USUARIO.svg";
+import logo from "../../assets/logo.jpg";
+import Icono from "../../assets/ICONO USUARIO.svg";
 import { Link } from "react-router-dom";
-import { ShoppingBag } from "lucide-react";
 
 function Header() {
   return (
@@ -17,17 +16,15 @@ function Header() {
           <ul className="flex gap-8 text-sm sm:text-base md:text-lg lg:text-xl font-bold uppercase">
             <li>
               <a href="/" className="hover:text-gray-400">
-                Inicio
+                Pedidos
               </a>
             </li>
             <li>
-              <Link to="/Categories" className="hover:text-gray-400">
-                Categorías
-              </Link>
+                Productos
             </li>
             <li>
               <a href="#" className="hover:text-gray-400">
-                Top Sellers
+                Catalogos
               </a>
             </li>
           </ul>
@@ -35,20 +32,14 @@ function Header() {
       </div>
 
       
-      <div className="flex items-center gap-4">
-        
-        <Link to="/carrito">
-          <ShoppingBag className="w-8 h-8 md:w-10 md:h-10 cursor-pointer hover:opacity-80 transition" />
-        </Link>
-
-        
-        <Link to="/Login">
+      <div className="flex items-center gap-4">        
+        <a href="/Login">
           <img
             src={Icono}
             className="w-12 h-12 md:w-12 md:h-12 cursor-pointer hover:opacity-80 transition"
             alt="Usuario"
           />
-        </Link>
+        </a>
       </div>
     </div>
   );

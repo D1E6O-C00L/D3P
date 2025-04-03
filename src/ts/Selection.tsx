@@ -18,7 +18,7 @@ function Iconos() {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500 flex flex-col justify-center items-center p-4">
-      {/* Flecha para regresar en la parte superior izquierda */}
+      
       <Link
         to="/"
         className="absolute top-4 left-4 flex items-center text-white hover:text-gray-300 transition"

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Trash, Plus, Minus, ShoppingCart } from "lucide-react";
+import { Trash, Plus, Minus, ShoppingCart, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface CartItem {
   id: number;
@@ -31,7 +32,9 @@ function Cart() {
   ]);
 
   const handleRemove = (id: number) => {
-    const confirmed = confirm("\u00bfEstás seguro de que deseas eliminar este producto del carrito?");
+    const confirmed = confirm(
+      "\u00bfEstás seguro de que deseas eliminar este producto del carrito?"
+    );
     if (confirmed) {
       setCartItems((prev) => prev.filter((item) => item.id !== id));
     }
@@ -46,12 +49,16 @@ function Cart() {
           if (newQuantity < 0) return [item];
 
           if (newQuantity === 0) {
-            const confirmDelete = confirm("Cantidad en 0. \\u00bfDeseas eliminar este producto?");
+            const confirmDelete = confirm(
+              "Cantidad en 0. \\u00bfDeseas eliminar este producto?"
+            );
             return confirmDelete ? [] : [item];
           }
 
           const confirmChange = confirm(
-            change > 0 ? "\u00bfAgregar una unidad m\u00e1s?" : "\u00bfEliminar una unidad?"
+            change > 0
+              ? "\u00bfAgregar una unidad m\u00e1s?"
+              : "\u00bfEliminar una unidad?"
           );
 
           return confirmChange ? [{ ...item, quantity: newQuantity }] : [item];
@@ -71,6 +78,13 @@ function Cart() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#e7edf3] to-[#f4f6f8] py-8 px-4 sm:px-6 lg:px-8">
+      <Link
+        to="/"
+        className="flex items-center text-[#0c2c4c] hover:text-[#1a4b7f]  transition"
+      >
+        <ArrowLeft className="h-6 w-6 mr-2" />
+        <span className="font-medium">Regresar</span>
+      </Link>
       <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
           <div className="bg-[#0c2c4c] text-white p-5 sm:p-6">
@@ -78,9 +92,10 @@ function Cart() {
               <h2 className="text-2xl sm:text-3xl font-bold flex items-center">
                 <ShoppingCart className="mr-3" />
                 Carrito de Compras
-              </h2>
+              </h2> 
               <span className="text-sm text-gray-300">
-                {cartItems.length} {cartItems.length === 1 ? "artículo" : "artículos"}
+                {cartItems.length}{" "}
+                {cartItems.length === 1 ? "artículo" : "artículos"}
               </span>
             </div>
           </div>
@@ -107,8 +122,12 @@ function Cart() {
                         className="w-16 h-16 sm:w-20 sm:h-20 rounded object-cover border border-gray-200"
                       />
                       <div>
-                        <h3 className="font-semibold text-gray-800">{item.name}</h3>
-                        <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                        <h3 className="font-semibold text-gray-800">
+                          {item.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {item.description}
+                        </p>
                       </div>
                     </div>
 
@@ -148,34 +167,48 @@ function Cart() {
 
                 <div className="mt-8 sm:ml-auto sm:w-72">
                   <div className="bg-gray-50 rounded-lg p-4">
-                    <h3 className="font-bold text-lg mb-3 text-[#0c2c4c]">Resumen de compra</h3>
+                    <h3 className="font-bold text-lg mb-3 text-[#0c2c4c]">
+                      Resumen de compra
+                    </h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
-                        <span className="font-medium">${subtotal.toLocaleString()} MXN</span>
+                        <span className="font-medium">
+                          ${subtotal.toLocaleString()} MXN
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Impuestos (16%)</span>
-                        <span className="font-medium">${impuestos.toLocaleString()} MXN</span>
+                        <span className="font-medium">
+                          ${impuestos.toLocaleString()} MXN
+                        </span>
                       </div>
                       <div className="border-t pt-2 mt-2 flex justify-between">
                         <span className="font-bold text-[#0c2c4c]">Total</span>
-                        <span className="font-bold text-[#0c2c4c]">${total.toLocaleString()} MXN</span>
+                        <span className="font-bold text-[#0c2c4c]">
+                          ${total.toLocaleString()} MXN
+                        </span>
                       </div>
                     </div>
                     <button className="w-full mt-4 bg-[#0c2c4c] hover:bg-[#1a4b7f] text-white py-3 rounded-md font-medium">
                       Continuar al pago
                     </button>
                     <p className="text-xs text-center text-gray-500 mt-2">
-                      Los precios incluyen impuestos. El envío se calculará en el siguiente paso.
+                      Los precios incluyen impuestos. El envío se calculará en
+                      el siguiente paso.
                     </p>
                   </div>
                 </div>
               </>
             ) : (
               <div className="text-center py-12">
-                <ShoppingCart size={48} className="mx-auto text-gray-300 mb-4" />
-                <h3 className="text-xl font-medium text-gray-800 mb-1">Tu carrito está vacío</h3>
+                <ShoppingCart
+                  size={48}
+                  className="mx-auto text-gray-300 mb-4"
+                />
+                <h3 className="text-xl font-medium text-gray-800 mb-1">
+                  Tu carrito está vacío
+                </h3>
                 <p className="text-gray-600 mb-6">
                   Parece que aún no has añadido ningún producto a tu carrito.
                 </p>
