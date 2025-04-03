@@ -13,30 +13,25 @@ import Selection from "./ts/Selection.tsx";
 import PersonalizedCup from "./PersonalizedCup/index";
 import Registration from "./Registration/registro";
 import Cart from "./shoppingCart/Cart";
+import ResetPassword from "./Login/ResetPassword"; // Importa el componente de ResetPassword
+import { UserProvider } from "./context/UserContext"; // Importar el UserProvider
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <>
-              <Header />
-              <Card />
-              <App />
-              <Footer />
-            </>
-          }
-        />
-        <Route path="/selection" element={<Selection />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/customization" element={<Customization />} />
-        <Route path="/personalizedCup" element={<PersonalizedCup />} />
-        <Route path="/registration" element={<Registration />} />
-        <Route path="/carrito" element={<Cart />} />
-      </Routes>
-    </Router>
+    <UserProvider> {/* Envolver toda la aplicación con el UserProvider */}
+      <Router>
+        <Routes>
+          <Route path="/" element={<><Header /><Card /><App /><Footer /></>} />
+          <Route path="/selection" element={<Selection />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/customization" element={<Customization />} />
+          <Route path="/personalizedCup" element={<PersonalizedCup />} />
+          <Route path="/registration" element={<Registration />} />
+          <Route path="/carrito" element={<Cart />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+        </Routes>
+      </Router>
+    </UserProvider>
   </StrictMode>
 );

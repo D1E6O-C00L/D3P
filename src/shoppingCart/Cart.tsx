@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Trash, Plus, Minus, ShoppingCart } from "lucide-react";
+import axios from "axios";
 
 interface CartItem {
   id: number;
@@ -11,27 +12,24 @@ interface CartItem {
 }
 
 function Cart() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([
-    {
-      id: 1,
-      name: "Playera Personalizada",
-      price: 250,
-      quantity: 2,
-      image: "/api/placeholder/80/80",
-      description: "100% algodón, talla M",
-    },
-    {
-      id: 2,
-      name: "Taza Mágica",
-      price: 150,
-      quantity: 1,
-      image: "/api/placeholder/80/80",
-      description: "Cambia de color con bebidas calientes",
-    },
-  ]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  useEffect(() => {
+    // Función para obtener el carrito desde el backend
+    const fetchCartItems = async () => {
+      try {
+        const response = await axios.get("http://localhost:8888/api/carrito/1"); // Ajusta la URL y el ID de usuario
+        setCartItems(response.data);
+      } catch (error) {
+        console.error("Error al obtener el carrito:", error);
+      }
+    };
+
+    fetchCartItems();
+  }, []);
 
   const handleRemove = (id: number) => {
-    const confirmed = confirm("\u00bfEstás seguro de que deseas eliminar este producto del carrito?");
+    const confirmed = confirm("¿Estás seguro de que deseas eliminar este producto del carrito?");
     if (confirmed) {
       setCartItems((prev) => prev.filter((item) => item.id !== id));
     }
@@ -46,12 +44,12 @@ function Cart() {
           if (newQuantity < 0) return [item];
 
           if (newQuantity === 0) {
-            const confirmDelete = confirm("Cantidad en 0. \\u00bfDeseas eliminar este producto?");
+            const confirmDelete = confirm("Cantidad en 0. ¿Deseas eliminar este producto?");
             return confirmDelete ? [] : [item];
           }
 
           const confirmChange = confirm(
-            change > 0 ? "\u00bfAgregar una unidad m\u00e1s?" : "\u00bfEliminar una unidad?"
+            change > 0 ? "¿Agregar una unidad más?" : "¿Eliminar una unidad?"
           );
 
           return confirmChange ? [{ ...item, quantity: newQuantity }] : [item];
