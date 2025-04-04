@@ -1,5 +1,5 @@
 import Icono from "../../assets/ICONO USUARIO.svg";
-import logo from "../../assets/logo.jpg";
+import logo from "../../assets/logo.svg";
 import { Link } from "react-router-dom";
 
 function Header() {
@@ -20,7 +20,9 @@ function Header() {
               </a>
             </li>
             <li>
-                Productos
+              <Link to={"/admin/productos"} className="hover:text-gray-400">
+              Productos
+              </Link>
             </li>
             <li>
               <a href="#" className="hover:text-gray-400">

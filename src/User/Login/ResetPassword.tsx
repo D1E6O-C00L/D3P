@@ -1,41 +1,53 @@
 "use client";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
-import Carousel from "./Carousel";  // Asegúrate de que el carousel esté importado
-import Logo from "../../assets/logo.svg"; // Puedes usar el logo
-import { actualizarContraseña } from "../api/auth"; // Importa la función para actualizar la contraseña
+import Carousel from "./Carousel";
+import Logo from "../../assets/logo.svg";
+import { actualizarContraseña } from "../../api/auth";
+import ModalAlert from "../../Modal/ModalAlert";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
 
-  // Estados para los inputs del formulario
-  const [correo, setCorreo] = useState("");  // Correo electrónico
-  const [nuevaContraseña, setNuevaContraseña] = useState("");  // Nueva contraseña
+  const [correo, setCorreo] = useState("");
+  const [nuevaContraseña, setNuevaContraseña] = useState("");
+  const [confirmarContraseña, setConfirmarContraseña] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [mostrarNueva, setMostrarNueva] = useState(false);
+  const [mostrarConfirmar, setMostrarConfirmar] = useState(false);
 
-  // Manejo del submit del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!correo || !nuevaContraseña) {
-      alert("Por favor, completa todos los campos.");
+    if (!correo || !nuevaContraseña || !confirmarContraseña) {
+      setAlertMessage("Por favor, completa todos los campos.");
+      setShowAlert(true);
+      return;
+    }
+
+    if (nuevaContraseña !== confirmarContraseña) {
+      setAlertMessage("Las contraseñas no coinciden.");
+      setShowAlert(true);
       return;
     }
 
     try {
-      // Llamada a la API para actualizar la contraseña
       const response = await actualizarContraseña({ correo, nuevaContraseña });
 
       if (response.success) {
         alert("Contraseña cambiada exitosamente!");
-        navigate("/login");  // Redirige al login después de cambiar la contraseña
+        navigate("/login");
       } else {
-        alert(response.message || "Error al cambiar la contraseña.");
+        setAlertMessage(response.message || "Error al cambiar la contraseña.");
+        setShowAlert(true);
       }
     } catch (error) {
       console.error(error);
-      alert("Error al intentar cambiar la contraseña.");
+      setAlertMessage("Error al intentar cambiar la contraseña.");
+      setShowAlert(true);
     }
   };
 
@@ -68,39 +80,68 @@ const ResetPassword = () => {
               />
             </div>
 
-            <div className="w-full my-6">
-              <div className="space-y-6">
-                <input
-                  name="correo"
-                  id="correo"
-                  value={correo}
-                  onChange={(e) => setCorreo(e.target.value)}
-                  placeholder="Correo"
-                  className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
-                />
+            <form onSubmit={handleSubmit} className="w-full my-6 space-y-6">
+              <input
+                name="correo"
+                id="correo"
+                value={correo}
+                onChange={(e) => setCorreo(e.target.value)}
+                placeholder="Correo"
+                className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
+              />
+
+              <div className="relative">
                 <input
                   name="nuevaContraseña"
                   id="nuevaContraseña"
-                  type="password"
+                  type={mostrarNueva ? "text" : "password"}
                   value={nuevaContraseña}
                   onChange={(e) => setNuevaContraseña(e.target.value)}
                   placeholder="Nueva Contraseña"
-                  className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
+                  className="border-b-2 border-[#efeeec] w-full py-2 px-2 pr-10 outline-none focus:border-[#0c2c4c] rounded"
                 />
+                <button
+                  type="button"
+                  onClick={() => setMostrarNueva(!mostrarNueva)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#1a4b7f]"
+                >
+                  {mostrarNueva ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
               </div>
-            </div>
 
-            <div className="text-center">
+              <div className="relative">
+                <input
+                  name="confirmarContraseña"
+                  id="confirmarContraseña"
+                  type={mostrarConfirmar ? "text" : "password"}
+                  value={confirmarContraseña}
+                  onChange={(e) => setConfirmarContraseña(e.target.value)}
+                  placeholder="Confirmar Contraseña"
+                  className="border-b-2 border-[#efeeec] w-full py-2 px-2 pr-10 outline-none focus:border-[#0c2c4c] rounded"
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#1a4b7f]"
+                >
+                  {mostrarConfirmar ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
+
               <button
-                onClick={handleSubmit}
+                type="submit"
                 className="bg-[#dbe4e5] hover:bg-[#bbbbc3] w-full max-w-xs text-[#1a4b7f] rounded-xl p-2 px-4 mb-4 font-semibold text-xl transition-colors"
               >
                 Cambiar Contraseña
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
+
+      {showAlert && (
+        <ModalAlert message={alertMessage} onClose={() => setShowAlert(false)} />
+      )}
     </div>
   );
 };

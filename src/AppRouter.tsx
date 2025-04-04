@@ -14,14 +14,25 @@ import ResetPassword from "./User/Login/ResetPassword";
 import { UserProvider } from "./User/context/UserContext";
 
 import HeaderAdmin from "./Admin/Principal/HeaderAdmin";
+import AdminDashboard from "./Admin/Principal/AdminDashboard";
+import AdminProducts from "./Admin/Productos/AdminProducts";
 
 export default function AppRouter() {
   return (
     <UserProvider>
       <Router>
         <Routes>
-        
-          <Route path="/" element={<><Header /><Card /><App /><Footer /></>} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Header />
+                <Card />
+                <App />
+                <Footer />
+              </>
+            }
+          />
           <Route path="/login" element={<Login />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/selection" element={<Selection />} />
@@ -30,9 +41,24 @@ export default function AppRouter() {
           <Route path="/personalizedCup" element={<PersonalizedCup />} />
           <Route path="/carrito" element={<Cart />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-
-        
-          <Route path="/admin" element={<HeaderAdmin />} />
+          <Route
+            path="/admin"
+            element={
+              <>
+                <HeaderAdmin />
+                <AdminDashboard />
+              </>
+            }
+          />
+          <Route
+            path="/admin/productos"
+            element={
+              <>
+                <HeaderAdmin />
+                <AdminProducts />
+              </>
+            }
+          />
         </Routes>
       </Router>
     </UserProvider>
