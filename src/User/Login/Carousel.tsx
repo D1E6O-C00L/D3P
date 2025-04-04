@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import imagen1 from "../assets/CamisaC1.jpg"
-import imagen2 from "../assets/TazaM1.jpg"
-import imagen3 from "../assets/TazaM2.jpg"
+import imagen1 from "../../assets/TazaS1.jpg"
+import imagen2 from "../../assets/TazaM1.jpg"
+import imagen3 from "../../assets/TazaM2.jpg"
 
 function Carousel() {
   const [activeImage, setActiveImage] = useState(0)

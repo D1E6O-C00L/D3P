@@ -2,8 +2,8 @@
 
 import { Eye } from "lucide-react"
 import { useCustomization } from "../context/CustomizationContext"
-import imageShirtFront from "../../assets/model-image.png" // Replace with actual t-shirt front image
-import imageShirtBack from "../../assets/model-image-back.png" // Replace with actual t-shirt back image
+import imageShirtFront from "../../../assets/model-image.png" // Replace with actual t-shirt front image
+import imageShirtBack from "../../../assets/model-image-back.png" // Replace with actual t-shirt back image
 
 export default function PreviewPanel() {
   const {

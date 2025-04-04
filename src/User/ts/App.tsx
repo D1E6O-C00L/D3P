@@ -1,16 +1,16 @@
 import { useNavigate } from "react-router-dom";
-import CamisaC1 from "../assets/CamisaC1.jpg";
-import CamisaC2 from "../assets/CamisaC2.jpg";
-import CamisaL1 from "../assets/CamisaL1.jpg";
-import CamisaL2 from "../assets/CamisaL2.jpg";
-import CamisaS1 from "../assets/CamisaS1.jpg";
-import CamisaS2 from "../assets/CamisaS2.jpg";
-import Taza1 from "../assets/Taza1.jpg";
-import Taza2 from "../assets/Taza2.jpg";
-import TazaM1 from "../assets/TazaM1.jpg";
-import TazaM2 from "../assets/TazaM2.jpg";
-import TazaS1 from "../assets/TazaS1.jpg";
-import TazaS2 from "../assets/TazaS2.jpg";
+import CamisaC1 from "../../assets/CamisaC1.jpg";
+import CamisaC2 from "../../assets/CamisaC2.jpg";
+import CamisaL1 from "../../assets/CamisaL1.jpg";
+import CamisaL2 from "../../assets/CamisaL2.jpg";
+import CamisaS1 from "../../assets/CamisaS1.jpg";
+import CamisaS2 from "../../assets/CamisaS2.jpg";
+import Taza1 from "../../assets/Taza1.jpg";
+import Taza2 from "../../assets/Taza2.jpg";
+import TazaM1 from "../../assets/TazaM1.jpg";
+import TazaM2 from "../../assets/TazaM2.jpg";
+import TazaS1 from "../../assets/TazaS1.jpg";
+import TazaS2 from "../../assets/TazaS2.jpg";
 
 function Card() {
   const navigate = useNavigate();

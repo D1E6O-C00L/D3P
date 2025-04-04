@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registrarUsuario } from "../api/auth";
-import { FiArrowLeft } from "react-icons/fi"; // Importa FiArrowLeft desde react-icons
+import { FiArrowLeft } from "react-icons/fi"; 
 
-// ...código existente...
+
 
 const Registro = () => {
   const navigate = useNavigate();
@@ -50,7 +50,7 @@ const Registro = () => {
           to="/"
           className="flex items-center text-white hover:text-gray-300 transition"
         >
-          <FiArrowLeft className="h-6 w-6 mr-2" /> {/* Cambia ArrowLeft por FiArrowLeft */}
+          <FiArrowLeft className="h-6 w-6 mr-2" /> 
           <span className="font-medium">Regresar</span>
         </Link>
       </div>

@@ -5,7 +5,7 @@ import type React from "react"
 import { useRef, useState, useEffect } from "react"
 import { useCustomization } from "../context/CustomizationContext"
 import { X } from "lucide-react"
-import imageCup from "../../assets/Model-Taza.jpeg"
+import imageCup from "../../../assets/Model-Taza.jpeg"
 
 export default function CupDisplay() {
   const {

@@ -1,6 +1,6 @@
-import img1 from "../assets/impresion.jpg";
-import img2 from "../assets/personalizacion.jpg";
-import img3 from "../assets/diseno.jpg";
+import img1 from "../../assets/impresion.jpg";
+import img2 from "../../assets/personalizacion.jpg";
+import img3 from "../../assets/diseno.jpg";
 import Header from "../ts/Header";
 import Footer from "../ts/footer";
 

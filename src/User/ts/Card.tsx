@@ -1,4 +1,4 @@
-import Image from '../assets/D3P.jpg';
+import Image from '../../assets/D3P.jpg';
 
 function Card() {
   return (

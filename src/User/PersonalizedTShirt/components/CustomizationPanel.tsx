@@ -3,8 +3,8 @@
 import type React from "react"
 import { useState } from "react"
 import { useCustomization } from "../context/CustomizationContext"
-import { Upload, Type } from "lucide-react"
-import Logo from "../../assets/Marca.jpg"
+import { Upload, Type, RotateCcw } from "lucide-react"
+import Logo from "../../../assets/Marca.jpg"
 
 export default function CustomizationPanel() {
   const {
@@ -15,8 +15,13 @@ export default function CustomizationPanel() {
     setCustomImage,
     setShowImage,
 
-    cupType,
-    setCupType,
+    shirtColor,
+    setShirtColor,
+    shirtSize,
+    setShirtSize,
+    
+    currentView,
+    setCurrentView,
   } = useCustomization()
 
   const [textInput, setTextInput] = useState("")
@@ -50,10 +55,20 @@ export default function CustomizationPanel() {
     }
   }
 
-  const cupTypes = [
-    { id: "magic", name: "Taza mágica" },
-    { id: "scanme", name: "Taza scan me" },
-    { id: "classic", name: "Taza clásica" },
+  const handleToggleView = () => {
+    setCurrentView(currentView === "front" ? "back" : "front")
+  }
+
+  const shirtColors = [
+    { id: "black", name: "Negro" },
+    { id: "white", name: "Blanco" },
+    { id: "gray", name: "Gris oscuro" },
+  ]
+
+  const shirtSizes = [
+    { id: "s", name: "Chica (S)" },
+    { id: "m", name: "Mediana (M)" },
+    { id: "l", name: "Grande (L)" },
   ]
 
   return (
@@ -65,6 +80,15 @@ export default function CustomizationPanel() {
           className="h-[10rem] w-auto object-contain"
         />
       </div>
+
+      {/* Toggle view button */}
+      <button
+        onClick={handleToggleView}
+        className="w-full flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+      >
+        <RotateCcw size={18} />
+        <span>{currentView === "front" ? "Ver parte trasera" : "Ver parte delantera"}</span>
+      </button>
 
       <div className="space-y-2">
         <div className="relative">
@@ -104,19 +128,37 @@ export default function CustomizationPanel() {
         <input id="image-upload" type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
       </div>
 
-      {/* Cup Types */}
+      {/* Shirt Colors */}
       <div className="space-y-2">
-        <h3 className="text-sm font-medium text-gray-700">Tipo de Taza</h3>
+        <h3 className="text-sm font-medium text-gray-700">Color de Playera</h3>
         <div className="flex flex-col gap-2">
-          {cupTypes.map((type) => (
+          {shirtColors.map((color) => (
             <button
-              key={type.id}
-              onClick={() => setCupType(type.id as any)}
+              key={color.id}
+              onClick={() => setShirtColor(color.id as any)}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                cupType === type.id ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                shirtColor === color.id ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {type.name}
+              {color.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Shirt Sizes */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-medium text-gray-700">Talla de Playera</h3>
+        <div className="flex flex-col gap-2">
+          {shirtSizes.map((size) => (
+            <button
+              key={size.id}
+              onClick={() => setShirtSize(size.id as any)}
+              className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                shirtSize === size.id ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {size.name}
             </button>
           ))}
         </div>
@@ -124,4 +166,3 @@ export default function CustomizationPanel() {
     </div>
   )
 }
-

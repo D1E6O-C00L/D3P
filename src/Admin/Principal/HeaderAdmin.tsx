@@ -1,5 +1,5 @@
-import logo from "../../assets/logo.jpg";
 import Icono from "../../assets/ICONO USUARIO.svg";
+import logo from "../../assets/logo.jpg";
 import { Link } from "react-router-dom";
 
 function Header() {
@@ -30,17 +30,13 @@ function Header() {
           </ul>
         </div>
       </div>
-
-      
-      <div className="flex items-center gap-4">        
-        <a href="/Login">
-          <img
-            src={Icono}
-            className="w-12 h-12 md:w-12 md:h-12 cursor-pointer hover:opacity-80 transition"
-            alt="Usuario"
-          />
-        </a>
-      </div>
+      <Link to="/login">
+              <img
+                src={Icono}
+                className="w-10 h-10 md:w-12 md:h-12 cursor-pointer hover:opacity-80 transition"
+                alt="Usuario"
+              />
+          </Link>
     </div>
   );
 }

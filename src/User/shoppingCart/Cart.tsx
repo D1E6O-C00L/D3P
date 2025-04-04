@@ -1,12 +1,7 @@
-<<<<<<< HEAD
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Trash, Plus, Minus, ShoppingCart, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-=======
-import React, { useState, useEffect } from "react";
-import { Trash, Plus, Minus, ShoppingCart } from "lucide-react";
 import axios from "axios";
->>>>>>> 418001b90c03e071f6c79f8f7e524641f95d6faf
 
 interface CartItem {
   id: number;
@@ -35,13 +30,7 @@ function Cart() {
   }, []);
 
   const handleRemove = (id: number) => {
-<<<<<<< HEAD
-    const confirmed = confirm(
-      "\u00bfEstás seguro de que deseas eliminar este producto del carrito?"
-    );
-=======
     const confirmed = confirm("¿Estás seguro de que deseas eliminar este producto del carrito?");
->>>>>>> 418001b90c03e071f6c79f8f7e524641f95d6faf
     if (confirmed) {
       setCartItems((prev) => prev.filter((item) => item.id !== id));
     }
@@ -56,24 +45,12 @@ function Cart() {
           if (newQuantity < 0) return [item];
 
           if (newQuantity === 0) {
-<<<<<<< HEAD
-            const confirmDelete = confirm(
-              "Cantidad en 0. \\u00bfDeseas eliminar este producto?"
-            );
-=======
             const confirmDelete = confirm("Cantidad en 0. ¿Deseas eliminar este producto?");
->>>>>>> 418001b90c03e071f6c79f8f7e524641f95d6faf
             return confirmDelete ? [] : [item];
           }
 
           const confirmChange = confirm(
-<<<<<<< HEAD
-            change > 0
-              ? "\u00bfAgregar una unidad m\u00e1s?"
-              : "\u00bfEliminar una unidad?"
-=======
             change > 0 ? "¿Agregar una unidad más?" : "¿Eliminar una unidad?"
->>>>>>> 418001b90c03e071f6c79f8f7e524641f95d6faf
           );
 
           return confirmChange ? [{ ...item, quantity: newQuantity }] : [item];
@@ -95,7 +72,7 @@ function Cart() {
     <div className="min-h-screen bg-gradient-to-b from-[#e7edf3] to-[#f4f6f8] py-8 px-4 sm:px-6 lg:px-8">
       <Link
         to="/"
-        className="flex items-center text-[#0c2c4c] hover:text-[#1a4b7f]  transition"
+        className="flex items-center text-[#0c2c4c] hover:text-[#1a4b7f] transition"
       >
         <ArrowLeft className="h-6 w-6 mr-2" />
         <span className="font-medium">Regresar</span>
@@ -107,10 +84,9 @@ function Cart() {
               <h2 className="text-2xl sm:text-3xl font-bold flex items-center">
                 <ShoppingCart className="mr-3" />
                 Carrito de Compras
-              </h2> 
+              </h2>
               <span className="text-sm text-gray-300">
-                {cartItems.length}{" "}
-                {cartItems.length === 1 ? "artículo" : "artículos"}
+                {cartItems.length} {cartItems.length === 1 ? "artículo" : "artículos"}
               </span>
             </div>
           </div>
@@ -217,10 +193,7 @@ function Cart() {
               </>
             ) : (
               <div className="text-center py-12">
-                <ShoppingCart
-                  size={48}
-                  className="mx-auto text-gray-300 mb-4"
-                />
+                <ShoppingCart size={48} className="mx-auto text-gray-300 mb-4" />
                 <h3 className="text-xl font-medium text-gray-800 mb-1">
                   Tu carrito está vacío
                 </h3>

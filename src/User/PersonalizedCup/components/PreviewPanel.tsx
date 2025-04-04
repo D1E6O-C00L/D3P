@@ -2,7 +2,7 @@
 
 import { Eye } from "lucide-react"
 import { useCustomization } from "../context/CustomizationContext"
-import imageCup from "../../assets/Model-Taza.jpeg"
+import imageCup from "../../../assets/Model-Taza.jpeg"
 
 export default function PreviewPanel() {
   const {

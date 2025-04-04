@@ -1,51 +1,57 @@
 "use client";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { iniciarSesion } from "../api/auth";
+import Carousel from "./Carousel";
+import Logo from "../../assets/logo.svg";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import Carousel from "./Carousel";  // Asegúrate de que el carousel esté importado
-import Logo from "../assets/logo.svg"; // Puedes usar el logo
-import { actualizarContraseña } from "../api/auth"; // Importa la función para actualizar la contraseña
+import { useUser } from "../context/UserContext";
 
-const ResetPassword = () => {
+function Login() {
   const navigate = useNavigate();
+  const { setUser } = useUser(); // USAMOS el contexto
 
-  // Estados para los inputs del formulario
-  const [correo, setCorreo] = useState("");  // Correo electrónico
-  const [nuevaContraseña, setNuevaContraseña] = useState("");  // Nueva contraseña
+  const [correo, setCorreo] = useState("");
+  const [contraseña, setContraseña] = useState("");
 
-  // Manejo del submit del formulario
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!correo || !nuevaContraseña) {
+    if (!correo || !contraseña) {
       alert("Por favor, completa todos los campos.");
       return;
     }
 
     try {
-      // Llamada a la API para actualizar la contraseña
-      const response = await actualizarContraseña({ correo, nuevaContraseña });
+      const response = await iniciarSesion({ correo, contraseña });
+      console.log("Respuesta del login:", response); // Para depurar
 
       if (response.success) {
-        alert("Contraseña cambiada exitosamente!");
-        navigate("/login");  // Redirige al login después de cambiar la contraseña
+        localStorage.setItem("token", response.token);
+
+        // 👉 Aquí seteamos el usuario en el contexto
+        setUser({
+          nombre: response.usuario.nombre,
+          correo: response.usuario.correo,
+          rol: response.usuario.rol || "usuario",
+        });
+
+        alert("¡Ingreso exitoso!");
+        navigate("/");
       } else {
-        alert(response.message || "Error al cambiar la contraseña.");
+        alert(response.message || "Error al iniciar sesión.");
       }
     } catch (error) {
       console.error(error);
-      alert("Error al intentar cambiar la contraseña.");
+      alert("Error al intentar iniciar sesión.");
     }
   };
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-[#0c2c4c] to-[#1a4b7f]">
       <div className="text-white p-4 flex items-center">
-        <Link
-          to="/login"
-          className="flex items-center text-white hover:text-gray-300 transition"
-        >
+        <Link to="/" className="flex items-center text-white hover:text-gray-300 transition">
           <ArrowLeft className="h-6 w-6 mr-2" />
           <span className="font-medium">Regresar</span>
         </Link>
@@ -58,14 +64,14 @@ const ResetPassword = () => {
 
           <div className="bg-white flex flex-col justify-between items-center text-[#1a4b7f] rounded-b-xl md:rounded-b-none md:rounded-r-xl w-[10%] p-8 md:w-1/2">
             <div className="text-center mb-4">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Recupera tu Contraseña
-              </h2>
-              <img
-                src={Logo || "/placeholder.svg"}
-                alt="Logo de la empresa"
-                className="w-32 md:w-40 mx-auto my-4"
-              />
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">Iniciar Sesión</h2>
+              <img src={Logo || "/placeholder.svg"} alt="Logo de la empresa" className="w-32 md:w-40 mx-auto my-4" />
+              <div className="text-sm md:text-base">
+                <p>¿Aún no tienes una cuenta?</p>
+                <Link to="/registration" className="underline hover:text-[#0c2c4c]">
+                  Registrarse
+                </Link>
+              </div>
             </div>
 
             <div className="w-full my-6">
@@ -79,12 +85,12 @@ const ResetPassword = () => {
                   className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
                 />
                 <input
-                  name="nuevaContraseña"
-                  id="nuevaContraseña"
+                  name="contraseña"
+                  id="contraseña"
                   type="password"
-                  value={nuevaContraseña}
-                  onChange={(e) => setNuevaContraseña(e.target.value)}
-                  placeholder="Nueva Contraseña"
+                  value={contraseña}
+                  onChange={(e) => setContraseña(e.target.value)}
+                  placeholder="Contraseña"
                   className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
                 />
               </div>
@@ -95,14 +101,18 @@ const ResetPassword = () => {
                 onClick={handleSubmit}
                 className="bg-[#dbe4e5] hover:bg-[#bbbbc3] w-full max-w-xs text-[#1a4b7f] rounded-xl p-2 px-4 mb-4 font-semibold text-xl transition-colors"
               >
-                Cambiar Contraseña
+                Entrar
               </button>
+
+              <Link to="/reset-password" className="text-sm md:text-base underline hover:text-[#0c2c4c]">
+                ¿Olvidaste tu contraseña?
+              </Link>
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-};
+}
 
-export default ResetPassword;
+export default Login;
