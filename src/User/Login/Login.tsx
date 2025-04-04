@@ -10,7 +10,7 @@ import { useUser } from "../context/UserContext";
 
 function Login() {
   const navigate = useNavigate();
-  const { setUser } = useUser(); // USAMOS el contexto
+  const { setUser } = useUser();
 
   const [correo, setCorreo] = useState("");
   const [contraseña, setContraseña] = useState("");
@@ -25,13 +25,14 @@ function Login() {
 
     try {
       const response = await iniciarSesion({ correo, contraseña });
-      console.log("Respuesta del login:", response); // Para depurar
+      console.log("Respuesta del login:", response); // Debug
 
       if (response.success) {
         localStorage.setItem("token", response.token);
 
-        // 👉 Aquí seteamos el usuario en el contexto
+        // ✅ Usamos directamente response.usuario para setUser
         setUser({
+          id_usuario: response.usuario.id_usuario,
           nombre: response.usuario.nombre,
           correo: response.usuario.correo,
           rol: response.usuario.rol || "usuario",
