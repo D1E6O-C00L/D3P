@@ -1,7 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 
 // Tipo de usuario
 interface User {
+  id_usuario: number;
   nombre: string;
   correo: string;
   rol: "usuario" | "admin";
@@ -27,7 +34,6 @@ export const useUser = () => {
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUserState] = useState<User | null>(null);
 
-  // Cargar usuario desde localStorage al cargar la app
   useEffect(() => {
     const storedUser = localStorage.getItem("usuario");
     if (storedUser) {
