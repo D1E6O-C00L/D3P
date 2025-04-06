@@ -11,6 +11,7 @@ import PersonalizedCup from "../User/PersonalizedCup/index";
 import Registration from "../User/Registration/registro";
 import Cart from "../User/shoppingCart/Cart";
 import ResetPassword from "../User/Login/ResetPassword";
+import CategoryList from "../User/Categories/CategoryList";
 
 export default function UserRoutes() {
   return (
@@ -20,7 +21,7 @@ export default function UserRoutes() {
         <Route path="/" element={<><Card /><App /><Footer /></>} />
         <Route path="/selection" element={<Selection />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/categories" element={<Categories />} />
+        <Route path="/categories" element={<CategoryList />} />
         <Route path="/customization" element={<Customization />} />
         <Route path="/personalizedCup" element={<PersonalizedCup />} />
         <Route path="/registration" element={<Registration />} />

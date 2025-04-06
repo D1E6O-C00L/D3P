@@ -15,7 +15,7 @@ function Header() {
         <div className="px-2 py-1 rounded-lg">
           <ul className="flex gap-8 text-sm sm:text-base md:text-lg lg:text-xl font-bold uppercase">
             <li>
-              <a href="/" className="hover:text-gray-400">
+              <a href="/admin/pedidos" className="hover:text-gray-400">
                 Pedidos
               </a>
             </li>
