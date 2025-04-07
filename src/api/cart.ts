@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8888/api/carrito";
+const API_URL = "https://d3p-backend.onrender.com/api/carrito";
 
 export const getCarritoUsuarioConProductos = async (id_usuario: number, token: string) => {
   const { data: carrito } = await axios.get(`${API_URL}/${id_usuario}`, {

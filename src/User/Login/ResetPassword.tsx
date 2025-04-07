@@ -8,7 +8,7 @@ import Logo from "../../assets/logo.svg";
 import { actualizarContraseña } from "../../api/auth";
 import ModalAlert from "../../Modal/ModalAlert";
 
-const ResetPassword = () => {
+const ResetPassword = React.memo(() => {
   const navigate = useNavigate();
 
   const [correo, setCorreo] = useState("");
@@ -38,8 +38,9 @@ const ResetPassword = () => {
       const response = await actualizarContraseña({ correo, nuevaContraseña });
 
       if (response.success) {
-        alert("Contraseña cambiada exitosamente!");
-        navigate("/login");
+        setAlertMessage("¡Contraseña cambiada exitosamente!");
+        setShowAlert(true);
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setAlertMessage(response.message || "Error al cambiar la contraseña.");
         setShowAlert(true);
@@ -57,6 +58,7 @@ const ResetPassword = () => {
         <Link
           to="/login"
           className="flex items-center text-white hover:text-gray-300 transition"
+          aria-label="Regresar a la página de inicio de sesión"
         >
           <ArrowLeft className="h-6 w-6 mr-2" />
           <span className="font-medium">Regresar</span>
@@ -77,6 +79,7 @@ const ResetPassword = () => {
                 src={Logo || "/placeholder.svg"}
                 alt="Logo de la empresa"
                 className="w-32 md:w-40 mx-auto my-4"
+                loading="lazy"
               />
             </div>
 
@@ -88,6 +91,7 @@ const ResetPassword = () => {
                 onChange={(e) => setCorreo(e.target.value)}
                 placeholder="Correo"
                 className="border-b-2 border-[#efeeec] w-full py-2 px-2 outline-none focus:border-[#0c2c4c] rounded"
+                aria-label="Correo electrónico"
               />
 
               <div className="relative">
@@ -99,11 +103,13 @@ const ResetPassword = () => {
                   onChange={(e) => setNuevaContraseña(e.target.value)}
                   placeholder="Nueva Contraseña"
                   className="border-b-2 border-[#efeeec] w-full py-2 px-2 pr-10 outline-none focus:border-[#0c2c4c] rounded"
+                  aria-label="Nueva contraseña"
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarNueva(!mostrarNueva)}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#1a4b7f]"
+                  aria-label={mostrarNueva ? "Ocultar nueva contraseña" : "Mostrar nueva contraseña"}
                 >
                   {mostrarNueva ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -118,11 +124,13 @@ const ResetPassword = () => {
                   onChange={(e) => setConfirmarContraseña(e.target.value)}
                   placeholder="Confirmar Contraseña"
                   className="border-b-2 border-[#efeeec] w-full py-2 px-2 pr-10 outline-none focus:border-[#0c2c4c] rounded"
+                  aria-label="Confirmar contraseña"
                 />
                 <button
                   type="button"
                   onClick={() => setMostrarConfirmar(!mostrarConfirmar)}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#1a4b7f]"
+                  aria-label={mostrarConfirmar ? "Ocultar confirmación de contraseña" : "Mostrar confirmación de contraseña"}
                 >
                   {mostrarConfirmar ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
@@ -144,6 +152,6 @@ const ResetPassword = () => {
       )}
     </div>
   );
-};
+});
 
 export default ResetPassword;

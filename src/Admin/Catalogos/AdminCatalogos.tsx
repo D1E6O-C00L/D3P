@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Search, Plus, Trash2, Pencil, X } from "lucide-react";
-import axios from "axios";
 import { eliminarCategoria, obtenerCategorias } from "../../api/categorias";
 
 interface Categoria {

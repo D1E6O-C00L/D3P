@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { obtenerCategorias } from "../../api/categorias";
 import { Link } from "react-router-dom";
 import Header from "../ts/Header";
@@ -33,7 +33,7 @@ const getCategoryIcon = (categoryName: string) => {
   return <Grid className="w-6 h-6" />;
 };
 
-const CategoryList = () => {
+const CategoryList = React.memo(() => {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -53,6 +53,13 @@ const CategoryList = () => {
 
     fetchCategorias();
   }, []);
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchTerm(e.target.value);
+    },
+    []
+  );
 
   const filteredCategorias = categorias.filter(
     (cat) =>
@@ -80,20 +87,21 @@ const CategoryList = () => {
               className="block w-full pl-10 pr-3 py-2 border border-white rounded-md leading-5 bg-transparent placeholder-white text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-white sm:text-sm"
               placeholder="Buscar categorías..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
+              aria-label="Buscar categorías"
             />
           </div>
         </div>
 
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-20" aria-live="polite">
             <Loader className="animate-spin h-8 w-8 text-white" />
             <span className="ml-2">Cargando categorías...</span>
           </div>
         ) : (
           <>
             {filteredCategorias.length === 0 && (
-              <div className="text-center py-16">
+              <div className="text-center py-16" aria-live="polite">
                 <p className="text-white text-lg">
                   No se encontraron categorías que coincidan con tu búsqueda.
                 </p>
@@ -106,6 +114,7 @@ const CategoryList = () => {
                   key={cat.id}
                   to={`/categorias/${cat.id}`}
                   className="group flex flex-col h-full overflow-hidden rounded-xl bg-white text-[#0c2c4c] border border-white/20 shadow-sm transition duration-300 hover:shadow-lg hover:-translate-y-1"
+                  aria-label={`Ver productos de la categoría ${cat.nombre}`}
                 >
                   <div className="flex items-center p-6 border-b border-[#1a4b7f]">
                     <div className="p-2 rounded-full bg-[#dbe4e5] text-[#1a4b7f] mr-4">
@@ -145,6 +154,6 @@ const CategoryList = () => {
       </div>
     </div>
   );
-};
+});
 
 export default CategoryList;

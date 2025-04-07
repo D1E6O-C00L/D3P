@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8888/api/productos";
+const API_URL = "https://d3p-backend.onrender.com/api/productos";
 
 export async function getAllProducts() {
   try {
@@ -78,7 +78,7 @@ export async function deleteProduct(id: number, token: string) {
 
 export async function deleteManyProducts(ids: number[], token: string) {
     try {
-      const res = await fetch(`http://localhost:8888/api/productos/eliminar-todos`, {
+      const res = await fetch(`https://d3p-backend.onrender.com/api/productos/eliminar-todos`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

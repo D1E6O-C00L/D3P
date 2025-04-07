@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Trash, Plus, Minus, ShoppingCart, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
@@ -25,7 +25,7 @@ function Cart() {
       if (!token || !user?.id_usuario) return;
 
       const response = await axios.get(
-        `http://localhost:8888/api/carrito/usuario/${user.id_usuario}/productos`,
+        `https://d3p-backend.onrender.com/api/carrito/usuario/${user.id_usuario}/productos`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -41,7 +41,6 @@ function Cart() {
     }
   };
 
-  // ✅ Este useEffect se ejecuta cuando el usuario está disponible
   useEffect(() => {
     if (user?.id_usuario) {
       fetchCartItems();
@@ -63,7 +62,7 @@ function Cart() {
     const token = localStorage.getItem("token");
     try {
       await axios.put(
-        `http://localhost:8888/api/carrito/${idCarrito}/productos/${id_producto}`,
+        `https://d3p-backend.onrender.com/api/carrito/${idCarrito}/productos/${id_producto}`,
         { cantidad: nuevaCantidad },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -81,7 +80,7 @@ function Cart() {
     const token = localStorage.getItem("token");
     try {
       await axios.delete(
-        `http://localhost:8888/api/carrito/${idCarrito}/productos/${id_producto}`,
+        `https://d3p-backend.onrender.com/api/carrito/${idCarrito}/productos/${id_producto}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchCartItems();
@@ -98,7 +97,7 @@ function Cart() {
     const token = localStorage.getItem("token");
     try {
       await axios.delete(
-        `http://localhost:8888/api/carrito/${idCarrito}/vaciar`,
+        `https://d3p-backend.onrender.com/api/carrito/${idCarrito}/vaciar`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setCartItems([]);
@@ -119,6 +118,7 @@ function Cart() {
       <Link
         to="/"
         className="flex items-center text-[#0c2c4c] hover:text-[#1a4b7f] transition"
+        aria-label="Regresar a la página principal"
       >
         <ArrowLeft className="h-6 w-6 mr-2" />
         <span className="font-medium">Regresar</span>
@@ -134,6 +134,7 @@ function Cart() {
               <button
                 onClick={handleVaciarCarrito}
                 className="text-red-500 hover:text-red-700 text-sm"
+                aria-label="Vaciar carrito"
               >
                 Vaciar carrito
               </button>
@@ -151,6 +152,9 @@ function Cart() {
                       src={item.imagen_url}
                       alt={item.nombre}
                       className="w-20 h-20 object-cover rounded border"
+                      width="80"
+                      height="80"
+                      loading="lazy"
                     />
                     <div>
                       <h3 className="font-semibold text-gray-800">
@@ -168,6 +172,7 @@ function Cart() {
                           handleQuantityChange(item.id_producto, item.cantidad, -1)
                         }
                         className="bg-gray-100 text-gray-600 px-2 rounded disabled:opacity-50"
+                        aria-label="Disminuir cantidad"
                       >
                         <Minus size={16} />
                       </button>
@@ -178,6 +183,7 @@ function Cart() {
                         }
                         disabled={item.cantidad >= item.stock}
                         className="bg-gray-100 text-gray-600 px-2 rounded disabled:opacity-50"
+                        aria-label="Aumentar cantidad"
                       >
                         <Plus size={16} />
                       </button>
@@ -190,6 +196,7 @@ function Cart() {
                       <button
                         onClick={() => handleRemove(item.id_producto)}
                         className="text-red-500 hover:text-red-700 mt-1"
+                        aria-label="Eliminar producto"
                       >
                         <Trash size={18} />
                       </button>

@@ -1,9 +1,10 @@
-"use client"
+"use client";
 
-import { Eye } from "lucide-react"
-import { useCustomization } from "../context/CustomizationContext"
-import imageShirtFront from "../../../assets/model-image.png" // Replace with actual t-shirt front image
-import imageShirtBack from "../../../assets/model-image-back.png" // Replace with actual t-shirt back image
+import { Eye } from "lucide-react";
+import { useCustomization } from "../context/CustomizationContext";
+import imageShirtFront from "../../../assets/model-image.png"; // Imagen de la parte delantera de la playera
+import imageShirtBack from "../../../assets/model-image-back.png"; // Imagen de la parte trasera de la playera
+import { useMemo } from "react";
 
 export default function PreviewPanel() {
   const {
@@ -18,76 +19,61 @@ export default function PreviewPanel() {
     shirtColor,
     shirtSize,
     currentView,
-  } = useCustomization()
+  } = useCustomization();
 
   const togglePreview = () => {
-    setShowPreview(!showPreview)
-  }
+    setShowPreview(!showPreview);
+  };
 
-  // Get shirt color name
-  const getShirtColorName = () => {
-    switch (shirtColor) {
-      case "black":
-        return "Negro"
-      case "white":
-        return "Blanco"
-      case "gray":
-        return "Gris oscuro"
-      default:
-        return "Negro"
-    }
-  }
+  // Memorizar valores derivados
+  const shirtDetails = useMemo(() => {
+    const colors = {
+      black: "Negro",
+      white: "Blanco",
+      gray: "Gris oscuro",
+    };
 
-  // Get shirt size name
-  const getShirtSizeName = () => {
-    switch (shirtSize) {
-      case "s":
-        return "Chica (S)"
-      case "m":
-        return "Mediana (M)"
-      case "l":
-        return "Grande (L)"
-      default:
-        return "Mediana (M)"
-    }
-  }
+    const sizes = {
+      s: "Chica (S)",
+      m: "Mediana (M)",
+      l: "Grande (L)",
+    };
 
-  // Get background color based on shirt color
-  const getShirtBackgroundColor = () => {
-    switch (shirtColor) {
-      case "black":
-        return "bg-black"
-      case "white":
-        return "bg-white"
-      case "gray":
-        return "bg-gray-700"
-      default:
-        return "bg-black"
-    }
-  }
+    const backgroundColors = {
+      black: "bg-black",
+      white: "bg-white",
+      gray: "bg-gray-700",
+    };
 
-  // Get text color based on shirt color for visibility
-  const getTextColor = () => {
-    return shirtColor === "white" ? "text-black" : "text-white"
-  }
+    return {
+      colorName: colors[shirtColor] || "Negro",
+      sizeName: sizes[shirtSize] || "Mediana (M)",
+      backgroundColor: backgroundColors[shirtColor] || "bg-black",
+      textColor: shirtColor === "white" ? "text-black" : "text-white",
+    };
+  }, [shirtColor, shirtSize]);
 
   return (
     <div className="flex flex-col h-full">
-      {/* View button */}
+      {/* Botón para alternar vista previa */}
       <div className="flex justify-center mb-4">
         <button
           onClick={togglePreview}
           className={`flex items-center gap-2 rounded-lg px-6 py-3 text-sm font-medium shadow-md transition-colors w-full justify-center ${
             showPreview ? "bg-blue-700 text-white hover:bg-blue-800" : "bg-blue-600 text-white hover:bg-blue-700"
           }`}
+          aria-label={showPreview ? "Ocultar vista previa" : "Ver vista previa"}
         >
           <Eye size={18} />
           <span>{showPreview ? "Ocultar vista previa" : "Ver"}</span>
         </button>
       </div>
 
-      {/* Preview area */}
-      <div className="flex-grow rounded-lg bg-gradient-to-b from-blue-50 to-gray-50 p-4 flex flex-col">
+      {/* Área de vista previa */}
+      <div
+        className="flex-grow rounded-lg bg-gradient-to-b from-blue-50 to-gray-50 p-4 flex flex-col"
+        aria-live="polite"
+      >
         {!showPreview ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
@@ -97,23 +83,27 @@ export default function PreviewPanel() {
           </div>
         ) : (
           <div className="flex flex-col h-full">
-            {/* Shirt details */}
+            {/* Detalles de la playera */}
             <div className="text-center mb-2 py-1 bg-blue-100 rounded-md">
               <h3 className="font-medium text-blue-800">
-                Playera {getShirtColorName()} - Talla {getShirtSizeName()} - {currentView === "front" ? "Frente" : "Espalda"}
+                Playera {shirtDetails.colorName} - Talla {shirtDetails.sizeName} -{" "}
+                {currentView === "front" ? "Frente" : "Espalda"}
               </h3>
             </div>
 
-            {/* Shirt preview */}
+            {/* Vista previa de la playera */}
             <div className="relative flex-grow flex items-center justify-center">
-              <div className={`h-full w-3/4 ${getShirtBackgroundColor()} relative flex items-center justify-center`}>
+              <div
+                className={`h-full w-3/4 ${shirtDetails.backgroundColor} relative flex items-center justify-center`}
+              >
                 <img
                   src={currentView === "front" ? imageShirtFront : imageShirtBack || "/placeholder.svg"}
-                  alt="T-shirt Preview"
+                  alt={`Vista previa de la playera (${currentView === "front" ? "Frente" : "Espalda"})`}
                   className="h-auto max-h-full w-auto max-w-full object-contain opacity-20"
+                  loading="lazy"
                 />
 
-                {/* Text overlay in preview */}
+                {/* Texto personalizado */}
                 {showText && customText && (
                   <div
                     className="absolute"
@@ -121,12 +111,17 @@ export default function PreviewPanel() {
                       left: `${textPosition.x}px`,
                       top: `${textPosition.y}px`,
                     }}
+                    aria-label="Texto personalizado en la playera"
                   >
-                    <p className={`text-xl font-bold ${getTextColor()} drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]`}>{customText}</p>
+                    <p
+                      className={`text-xl font-bold ${shirtDetails.textColor} drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]`}
+                    >
+                      {customText}
+                    </p>
                   </div>
                 )}
 
-                {/* Image overlay in preview */}
+                {/* Imagen personalizada */}
                 {showImage && customImage && (
                   <div
                     className="absolute"
@@ -134,11 +129,13 @@ export default function PreviewPanel() {
                       left: `${imagePosition.x}px`,
                       top: `${imagePosition.y}px`,
                     }}
+                    aria-label="Imagen personalizada en la playera"
                   >
                     <img
                       src={customImage || "/placeholder.svg"}
-                      alt="Custom uploaded image"
+                      alt="Imagen personalizada cargada"
                       className="h-auto max-h-[150px] w-auto max-w-[150px] object-contain"
+                      loading="lazy"
                     />
                   </div>
                 )}
@@ -148,5 +145,5 @@ export default function PreviewPanel() {
         )}
       </div>
     </div>
-  )
+  );
 }

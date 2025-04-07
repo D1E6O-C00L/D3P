@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaCoffee, FaTshirt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";

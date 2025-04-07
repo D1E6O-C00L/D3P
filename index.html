@@ -1,20 +1,57 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Meta básico -->
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-    <title>D3P</title>
+    <meta name="description" content="D3P: Personaliza tus productos favoritos como tazas y playeras con diseños únicos y creativos." />
+    <meta name="keywords" content="personalización, tazas, playeras, diseño, impresión, D3P" />
+    <meta name="author" content="D3P Team" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Meta Open Graph para redes sociales -->
+    <meta property="og:title" content="D3P - Personaliza tus productos favoritos" />
+    <meta property="og:description" content="Personaliza tazas, playeras y más con diseños únicos y creativos en D3P." />
+    <meta property="og:image" content="/src/assets/og-image.jpg" />
+    <meta property="og:url" content="https://tu-dominio.com/" />
+    <meta property="og:type" content="website" />
+
+    <!-- Meta Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="D3P - Personaliza tus productos favoritos" />
+    <meta name="twitter:description" content="Personaliza tazas, playeras y más con diseños únicos y creativos en D3P." />
+    <meta name="twitter:image" content="/src/assets/og-image.jpg" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/src/assets/favicon.svg" />
+
+    <!-- Preconexión para mejorar el rendimiento -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Fuentes y estilos -->
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      as="style"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css"
+    />
+
+    <!-- Título único y descriptivo -->
+    <title>D3P - Personaliza tus productos favoritos</title>
   </head>
   <body>
+    <!-- Contenedor principal -->
     <div id="root"></div>
+
+    <!-- Script principal -->
     <script type="module" src="/src/main.tsx"></script>
-  <body>
-    <div id="Admin"></div>
-    <script type="module" src="/src/Routes/AdminRoutes.tsx"></script>
-  </body>  
+  </body>
 </html>

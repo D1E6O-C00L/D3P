@@ -3,7 +3,6 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 
-
 interface Producto {
   id_producto: number;
   nombre: string;
@@ -12,27 +11,32 @@ interface Producto {
   imagen_url: string;
 }
 
-const ProductsByCategory = () => {
+const ProductsByCategory = React.memo(() => {
   const { id_categoria } = useParams<{ id_categoria?: string }>();
   const [productos, setProductos] = useState<Producto[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchProductos = async () => {
       if (!id_categoria) {
         setError("No se encontró la categoría seleccionada.");
+        setIsLoading(false);
         return;
       }
 
       try {
+        setIsLoading(true);
         const res = await axios.get(
-          `http://localhost:8888/api/categorias/categoria/${id_categoria}`
+          `https://d3p-backend.onrender.com/api/categorias/categoria/${id_categoria}`
         );
         setProductos(res.data.data || []);
         setError(null);
       } catch (err) {
         console.error("Error al cargar productos:", err);
         setError("No se pudieron cargar los productos.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -45,6 +49,7 @@ const ProductsByCategory = () => {
         <Link
           to="/categories"
           className="flex items-center text-white hover:text-gray-200 transition"
+          aria-label="Volver a la lista de categorías"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           <span className="font-medium text-lg">Volver a categorías</span>
@@ -52,13 +57,22 @@ const ProductsByCategory = () => {
       </div>
 
       <h1 className="text-3xl font-bold text-center mb-10">
-        Productos
+        Productos de la categoría
       </h1>
 
-      {error ? (
-        <p className="text-center text-red-300 font-medium">{error}</p>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-20" aria-live="polite">
+          <span className="flex items-center gap-2">
+            <ArrowLeft className="animate-spin h-8 w-8 text-white" />
+            Cargando productos...
+          </span>
+        </div>
+      ) : error ? (
+        <p className="text-center text-red-300 font-medium" aria-live="assertive">
+          {error}
+        </p>
       ) : productos.length === 0 ? (
-        <p className="text-center text-white/80 text-lg">
+        <p className="text-center text-white/80 text-lg" aria-live="polite">
           No hay productos en esta categoría.
         </p>
       ) : (
@@ -70,8 +84,9 @@ const ProductsByCategory = () => {
             >
               <img
                 src={prod.imagen_url}
-                alt={prod.nombre}
+                alt={`Imagen del producto ${prod.nombre}`}
                 className="w-full h-48 object-cover"
+                loading="lazy"
               />
               <div className="p-4">
                 <h2 className="text-xl font-bold text-[#1a4b7f] mb-1">
@@ -90,6 +105,6 @@ const ProductsByCategory = () => {
       )}
     </div>
   );
-};
+});
 
 export default ProductsByCategory;
