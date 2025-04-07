@@ -1,10 +1,14 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
-  useEffect,
   ReactNode,
+  useMemo,
 } from "react";
+
+// Constantes para claves de localStorage
+const LOCAL_STORAGE_USER_KEY = "usuario";
+const LOCAL_STORAGE_TOKEN_KEY = "token";
 
 // Tipo de usuario
 interface User {
@@ -21,8 +25,10 @@ interface UserContextType {
   logout: () => void;
 }
 
+// Creación del contexto
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+// Hook personalizado para usar el contexto
 export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) {
@@ -31,33 +37,39 @@ export const useUser = () => {
   return context;
 };
 
+// Proveedor del contexto
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUserState] = useState<User | null>(null);
+  // Estado inicial derivado de localStorage
+  const [user, setUserState] = useState<User | null>(() => {
+    const storedUser = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  useEffect(() => {
-    const storedUser = localStorage.getItem("usuario");
-    if (storedUser) {
-      setUserState(JSON.parse(storedUser));
-    }
-  }, []);
-
+  // Función para actualizar el usuario y sincronizar con localStorage
   const setUser = (newUser: User | null) => {
     if (newUser) {
-      localStorage.setItem("usuario", JSON.stringify(newUser));
+      localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(newUser));
     } else {
-      localStorage.removeItem("usuario");
+      localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
     }
     setUserState(newUser);
   };
 
+  // Función para cerrar sesión
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("usuario");
+    localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
+    localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
     setUserState(null);
   };
 
+  // Memorizar el valor del contexto para evitar renders innecesarios
+  const value = useMemo(
+    () => ({ user, setUser, logout }),
+    [user] // Solo se recalcula cuando el usuario cambia
+  );
+
   return (
-    <UserContext.Provider value={{ user, setUser, logout }}>
+    <UserContext.Provider value={value}>
       {children}
     </UserContext.Provider>
   );

@@ -1,12 +1,10 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useRef, useState, useEffect } from "react"
-import { useCustomization } from "../context/CustomizationContext"
-import { X } from "lucide-react"
-import imageShirtFront from "../../../assets/model-image.png" // Replace with actual t-shirt front image
-import imageShirtBack from "../../../assets/model-image-back.png" // Replace with actual t-shirt back image
+import React, { useRef, useState, useEffect } from "react";
+import { useCustomization } from "../context/CustomizationContext";
+import { X } from "lucide-react";
+import imageShirtFront from "../../../assets/model-image.png"; // Imagen de la parte delantera de la playera
+import imageShirtBack from "../../../assets/model-image-back.png"; // Imagen de la parte trasera de la playera
 
 export default function TShirtDisplay() {
   const {
@@ -23,125 +21,91 @@ export default function TShirtDisplay() {
     setShowImage,
 
     shirtColor,
-    shirtSize,
     currentView,
-  } = useCustomization()
+  } = useCustomization();
 
- 
-  const [draggingText, setDraggingText] = useState(false)
-  const [draggingImage, setDraggingImage] = useState(false)
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const [dragging, setDragging] = useState<"text" | "image" | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null);
 
-
-  const handleTextMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDraggingText(true)
-    const element = e.currentTarget as HTMLDivElement
-    const rect = element.getBoundingClientRect()
+  const handleMouseDown = (e: React.MouseEvent, type: "text" | "image") => {
+    e.stopPropagation();
+    setDragging(type);
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
     setDragOffset({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top,
-    })
-  }
+    });
+  };
 
- 
-  const handleImageMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDraggingImage(true)
-    const element = e.currentTarget as HTMLDivElement
-    const rect = element.getBoundingClientRect()
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    })
-  }
-
-  
   const handleMouseMove = (e: MouseEvent) => {
-    if (!containerRef.current) return
+    if (!containerRef.current || !dragging) return;
 
-    const containerRect = containerRef.current.getBoundingClientRect()
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - containerRect.left - dragOffset.x;
+    const y = e.clientY - containerRect.top - dragOffset.y;
 
-    if (draggingText) {
-      const x = e.clientX - containerRect.left - dragOffset.x
-      const y = e.clientY - containerRect.top - dragOffset.y
+    const boundedX = Math.max(0, Math.min(x, containerRect.width - 100));
+    const boundedY = Math.max(0, Math.min(y, dragging === "text" ? containerRect.height - 40 : containerRect.height - 100));
 
-     
-      const boundedX = Math.max(0, Math.min(x, containerRect.width - 100))
-      const boundedY = Math.max(0, Math.min(y, containerRect.height - 40))
-
-      setTextPosition({ x: boundedX, y: boundedY })
+    if (dragging === "text") {
+      setTextPosition({ x: boundedX, y: boundedY });
+    } else if (dragging === "image") {
+      setImagePosition({ x: boundedX, y: boundedY });
     }
+  };
 
-    if (draggingImage) {
-      const x = e.clientX - containerRect.left - dragOffset.x
-      const y = e.clientY - containerRect.top - dragOffset.y
-
-     
-      const boundedX = Math.max(0, Math.min(x, containerRect.width - 100))
-      const boundedY = Math.max(0, Math.min(y, containerRect.height - 100))
-
-      setImagePosition({ x: boundedX, y: boundedY })
-    }
-  }
-
-  
   const handleMouseUp = () => {
-    setDraggingText(false)
-    setDraggingImage(false)
-  }
-
+    setDragging(null);
+  };
 
   useEffect(() => {
-    if (draggingText || draggingImage) {
-      window.addEventListener("mousemove", handleMouseMove)
-      window.addEventListener("mouseup", handleMouseUp)
+    if (dragging) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove)
-      window.removeEventListener("mouseup", handleMouseUp)
-    }
-  }, [draggingText, draggingImage])
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [dragging]);
 
+  const getShirtImage = () => (currentView === "front" ? imageShirtFront : imageShirtBack);
 
-  const getShirtImage = () => {
-    return currentView === "front" ? imageShirtFront : imageShirtBack
-  }
-
-  // Get background color based on shirt color
   const getShirtBackgroundColor = () => {
     switch (shirtColor) {
       case "black":
-        return "bg-black"
+        return "bg-black";
       case "white":
-        return "bg-white"
+        return "bg-white";
       case "gray":
-        return "bg-gray-700"
+        return "bg-gray-700";
       default:
-        return "bg-black"
+        return "bg-black";
     }
-  }
+  };
 
-  // Get text color based on shirt color for visibility
-  const getTextColor = () => {
-    return shirtColor === "white" ? "text-black" : "text-white"
-  }
+  const getTextColor = () => (shirtColor === "white" ? "text-black" : "text-white");
 
   return (
-    <div ref={containerRef} className="relative h-[400px] w-full overflow-hidden flex items-center justify-center">
-      
+    <div
+      ref={containerRef}
+      className="relative h-[400px] w-full overflow-hidden flex items-center justify-center"
+      aria-label="Área de personalización de la playera"
+    >
+      {/* Contenedor de la playera */}
       <div className={`h-full w-3/4 ${getShirtBackgroundColor()} relative flex items-center justify-center`}>
         <img
           src={getShirtImage() || "/placeholder.svg"}
-          alt={`T-shirt ${currentView} view`}
+          alt={`Vista ${currentView === "front" ? "frontal" : "trasera"} de la playera`}
           className="h-auto max-h-full w-auto max-w-full object-contain opacity-20"
+          loading="lazy"
         />
       </div>
 
-      
+      {/* Texto personalizado */}
       {showText && customText && (
         <div
           className="absolute cursor-move"
@@ -150,15 +114,17 @@ export default function TShirtDisplay() {
             top: `${textPosition.y}px`,
             userSelect: "none",
           }}
-          onMouseDown={handleTextMouseDown}
+          onMouseDown={(e) => handleMouseDown(e, "text")}
+          aria-label="Texto personalizado en la playera"
         >
           <div className="relative group">
-            <p className={`text-xl font-bold ${getTextColor()} drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]`}>{customText}</p>
-
-            
+            <p className={`text-xl font-bold ${getTextColor()} drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]`}>
+              {customText}
+            </p>
             <button
               className="absolute -right-3 -top-3 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
               onClick={() => setShowText(false)}
+              aria-label="Eliminar texto personalizado"
             >
               <X size={14} />
             </button>
@@ -166,7 +132,7 @@ export default function TShirtDisplay() {
         </div>
       )}
 
-      
+      {/* Imagen personalizada */}
       {showImage && customImage && (
         <div
           className="absolute cursor-move"
@@ -175,19 +141,20 @@ export default function TShirtDisplay() {
             top: `${imagePosition.y}px`,
             userSelect: "none",
           }}
-          onMouseDown={handleImageMouseDown}
+          onMouseDown={(e) => handleMouseDown(e, "image")}
+          aria-label="Imagen personalizada en la playera"
         >
           <div className="relative group">
             <img
               src={customImage || "/placeholder.svg"}
-              alt="Custom uploaded image"
+              alt="Imagen personalizada cargada"
               className="h-auto max-h-[150px] w-auto max-w-[150px] object-contain"
+              loading="lazy"
             />
-
-            
             <button
               className="absolute -right-3 -top-3 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
               onClick={() => setShowImage(false)}
+              aria-label="Eliminar imagen personalizada"
             >
               <X size={14} />
             </button>
@@ -195,5 +162,5 @@ export default function TShirtDisplay() {
         </div>
       )}
     </div>
-  )
+  );
 }

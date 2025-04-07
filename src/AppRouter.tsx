@@ -16,7 +16,7 @@ import CategoryList from "./User/Categories/CategoryList";
 import ProductsByCategory from "./User/Categories/ProductsByCategory";
 
 import HeaderAdmin from "./Admin/Principal/HeaderAdmin";
-import AdminDashboard from "./Admin/Principal/AdminDashboard";
+//import AdminDashboard from "./Admin/Principal/AdminDashboard";
 import AdminProducts from "./Admin/Productos/AdminProducts";
 import AdminPedidos from "./Admin/Pedidos/AdminPedidos";
 import AdminCatalogos from "./Admin/Catalogos/AdminCatalogos";

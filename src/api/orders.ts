@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8888/api/pedidos";
+const API_URL = "https://d3p-backend.onrender.com/api/pedidos";
 
 export async function getAllPedidos(token: string) {
   try {

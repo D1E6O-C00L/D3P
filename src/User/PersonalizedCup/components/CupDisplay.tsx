@@ -1,11 +1,9 @@
-"use client"
+"use client";
 
-import type React from "react"
-
-import { useRef, useState, useEffect } from "react"
-import { useCustomization } from "../context/CustomizationContext"
-import { X } from "lucide-react"
-import imageCup from "../../../assets/Model-Taza.jpeg"
+import { useRef, useState, useEffect, useCallback, useMemo } from "react";
+import { useCustomization } from "../context/CustomizationContext";
+import { X } from "lucide-react";
+import imageCup from "../../../assets/Model-Taza.jpeg";
 
 export default function CupDisplay() {
   const {
@@ -14,126 +12,97 @@ export default function CupDisplay() {
     setTextPosition,
     showText,
     setShowText,
-
     customImage,
     imagePosition,
     setImagePosition,
     showImage,
     setShowImage,
+  } = useCustomization();
 
-    cupType,
-  } = useCustomization()
+  const [dragging, setDragging] = useState<"text" | "image" | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
- 
-  const [draggingText, setDraggingText] = useState(false)
-  const [draggingImage, setDraggingImage] = useState(false)
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent, type: "text" | "image") => {
+      e.stopPropagation();
+      setDragging(type);
+      const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top,
+      });
+    },
+    []
+  );
 
+  const handleMouseMove = useCallback(
+    (e: MouseEvent) => {
+      if (!containerRef.current || !dragging) return;
+      const containerRect = containerRef.current.getBoundingClientRect();
 
-  const handleTextMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDraggingText(true)
-    const element = e.currentTarget as HTMLDivElement
-    const rect = element.getBoundingClientRect()
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    })
-  }
+      const x = e.clientX - containerRect.left - dragOffset.x;
+      const y = e.clientY - containerRect.top - dragOffset.y;
 
- 
-  const handleImageMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setDraggingImage(true)
-    const element = e.currentTarget as HTMLDivElement
-    const rect = element.getBoundingClientRect()
-    setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    })
-  }
+      const maxX = containerRect.width - 100;
+      const maxY = dragging === "image" ? containerRect.height - 100 : containerRect.height - 40;
 
-  
-  const handleMouseMove = (e: MouseEvent) => {
-    if (!containerRef.current) return
+      const boundedX = Math.max(0, Math.min(x, maxX));
+      const boundedY = Math.max(0, Math.min(y, maxY));
 
-    const containerRect = containerRef.current.getBoundingClientRect()
+      dragging === "text"
+        ? setTextPosition({ x: boundedX, y: boundedY })
+        : setImagePosition({ x: boundedX, y: boundedY });
+    },
+    [dragging, dragOffset, setTextPosition, setImagePosition]
+  );
 
-    if (draggingText) {
-      const x = e.clientX - containerRect.left - dragOffset.x
-      const y = e.clientY - containerRect.top - dragOffset.y
-
-     
-      const boundedX = Math.max(0, Math.min(x, containerRect.width - 100))
-      const boundedY = Math.max(0, Math.min(y, containerRect.height - 40))
-
-      setTextPosition({ x: boundedX, y: boundedY })
-    }
-
-    if (draggingImage) {
-      const x = e.clientX - containerRect.left - dragOffset.x
-      const y = e.clientY - containerRect.top - dragOffset.y
-
-     
-      const boundedX = Math.max(0, Math.min(x, containerRect.width - 100))
-      const boundedY = Math.max(0, Math.min(y, containerRect.height - 100))
-
-      setImagePosition({ x: boundedX, y: boundedY })
-    }
-  }
-
-  
-  const handleMouseUp = () => {
-    setDraggingText(false)
-    setDraggingImage(false)
-  }
-
+  const handleMouseUp = useCallback(() => {
+    setDragging(null);
+  }, []);
 
   useEffect(() => {
-    if (draggingText || draggingImage) {
-      window.addEventListener("mousemove", handleMouseMove)
-      window.addEventListener("mouseup", handleMouseUp)
+    if (dragging) {
+      window.addEventListener("mousemove", handleMouseMove, { passive: false });
+      window.addEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove)
-      window.removeEventListener("mouseup", handleMouseUp)
-    }
-  }, [draggingText, draggingImage])
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [dragging, handleMouseMove, handleMouseUp]);
 
-
-  const getCupImage = () => {
-    return imageCup
-  }
+  const cupImage = useMemo(() => imageCup, []);
 
   return (
-    <div ref={containerRef} className="relative h-[400px] w-full overflow-hidden">
-      
+    <div
+      ref={containerRef}
+      className="relative h-[400px] w-full overflow-hidden"
+      aria-label="Área de personalización de la taza"
+    >
       <img
-        src={getCupImage() || "/placeholder.svg"}
-        alt="Cup"
+        src={cupImage || "/placeholder.svg"}
+        alt="Modelo de taza personalizable"
         className="h-auto max-h-full w-auto max-w-full object-contain"
+        loading="lazy"
       />
 
-      
       {showText && customText && (
         <div
           className="absolute cursor-move"
-          style={{
-            left: `${textPosition.x}px`,
-            top: `${textPosition.y}px`,
-            userSelect: "none",
-          }}
-          onMouseDown={handleTextMouseDown}
+          style={{ left: `${textPosition.x}px`, top: `${textPosition.y}px`, userSelect: "none" }}
+          onMouseDown={(e) => handleMouseDown(e, "text")}
+          aria-label="Texto personalizado"
         >
           <div className="relative group">
-            <p className="text-xl font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">{customText}</p>
-
-            
+            <p className="text-xl font-bold text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+              {customText}
+            </p>
             <button
               className="absolute -right-3 -top-3 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+              aria-label="Eliminar texto personalizado"
               onClick={() => setShowText(false)}
             >
               <X size={14} />
@@ -142,27 +111,23 @@ export default function CupDisplay() {
         </div>
       )}
 
-      
       {showImage && customImage && (
         <div
           className="absolute cursor-move"
-          style={{
-            left: `${imagePosition.x}px`,
-            top: `${imagePosition.y}px`,
-            userSelect: "none",
-          }}
-          onMouseDown={handleImageMouseDown}
+          style={{ left: `${imagePosition.x}px`, top: `${imagePosition.y}px`, userSelect: "none" }}
+          onMouseDown={(e) => handleMouseDown(e, "image")}
+          aria-label="Imagen personalizada"
         >
           <div className="relative group">
             <img
-              src={customImage || "/placeholder.svg"}
-              alt="Custom uploaded image"
+              src={customImage}
+              alt="Imagen personalizada para la taza"
               className="h-auto max-h-[150px] w-auto max-w-[150px] object-contain"
+              loading="lazy"
             />
-
-            
             <button
               className="absolute -right-3 -top-3 rounded-full bg-red-500 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+              aria-label="Eliminar imagen personalizada"
               onClick={() => setShowImage(false)}
             >
               <X size={14} />
@@ -171,6 +136,5 @@ export default function CupDisplay() {
         </div>
       )}
     </div>
-  )
+  );
 }
-

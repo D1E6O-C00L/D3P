@@ -1,33 +1,69 @@
 import { Routes, Route } from "react-router-dom";
-import Header from "../User/ts/Header";
-import Footer from "../User/ts/footer";
-import App from "../User/ts/App";
-import Card from "../User/ts/Card";
-import Selection from "../User/ts/Selection";
-import Login from "../User/Login/Login";
-import Categories from "../User/Categories/Categories";
-import Customization from "../User/PersonalizedTShirt/index";
-import PersonalizedCup from "../User/PersonalizedCup/index";
-import Registration from "../User/Registration/registro";
-import Cart from "../User/shoppingCart/Cart";
-import ResetPassword from "../User/Login/ResetPassword";
-import CategoryList from "../User/Categories/CategoryList";
+import { lazy, Suspense } from "react";
+
+// Lazy load components for better performance
+const Header = lazy(() => import("../User/ts/Header"));
+const Footer = lazy(() => import("../User/ts/footer"));
+const App = lazy(() => import("../User/ts/App"));
+const Card = lazy(() => import("../User/ts/Card"));
+const Selection = lazy(() => import("../User/ts/Selection"));
+const Login = lazy(() => import("../User/Login/Login"));
+//const Categories = lazy(() => import("../User/Categories/Categories"));
+const Customization = lazy(() => import("../User/PersonalizedTShirt/index"));
+const PersonalizedCup = lazy(() => import("../User/PersonalizedCup/index"));
+const Registration = lazy(() => import("../User/Registration/registro"));
+const Cart = lazy(() => import("../User/shoppingCart/Cart"));
+const ResetPassword = lazy(() => import("../User/Login/ResetPassword"));
+const CategoryList = lazy(() => import("../User/Categories/CategoryList"));
 
 export default function UserRoutes() {
   return (
-    <>
+    <Suspense fallback={<div className="text-center p-4">Cargando...</div>}>
       <Header />
       <Routes>
-        <Route path="/" element={<><Card /><App /><Footer /></>} />
-        <Route path="/selection" element={<Selection />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/categories" element={<CategoryList />} />
-        <Route path="/customization" element={<Customization />} />
-        <Route path="/personalizedCup" element={<PersonalizedCup />} />
-        <Route path="/registration" element={<Registration />} />
-        <Route path="/carrito" element={<Cart />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/"
+          element={
+            <main aria-label="Página principal">
+              <Card />
+              <App />
+              <Footer />
+            </main>
+          }
+        />
+        <Route
+          path="/selection"
+          element={<main aria-label="Selección de productos"><Selection /></main>}
+        />
+        <Route
+          path="/login"
+          element={<main aria-label="Inicio de sesión"><Login /></main>}
+        />
+        <Route
+          path="/categories"
+          element={<main aria-label="Categorías de productos"><CategoryList /></main>}
+        />
+        <Route
+          path="/customization"
+          element={<main aria-label="Personalización de camisetas"><Customization /></main>}
+        />
+        <Route
+          path="/personalizedCup"
+          element={<main aria-label="Personalización de tazas"><PersonalizedCup /></main>}
+        />
+        <Route
+          path="/registration"
+          element={<main aria-label="Registro de usuario"><Registration /></main>}
+        />
+        <Route
+          path="/carrito"
+          element={<main aria-label="Carrito de compras"><Cart /></main>}
+        />
+        <Route
+          path="/reset-password"
+          element={<main aria-label="Restablecimiento de contraseña"><ResetPassword /></main>}
+        />
       </Routes>
-    </>
+    </Suspense>
   );
 }
