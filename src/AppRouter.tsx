@@ -19,6 +19,8 @@ import HeaderAdmin from "./Admin/Principal/HeaderAdmin";
 import AdminDashboard from "./Admin/Principal/AdminDashboard";
 import AdminProducts from "./Admin/Productos/AdminProducts";
 import AdminPedidos from "./Admin/Pedidos/AdminPedidos";
+import AdminCatalogos from "./Admin/Catalogos/AdminCatalogos";
+
 
 export default function AppRouter() {
   return (
@@ -72,6 +74,16 @@ export default function AppRouter() {
               </>
             }
           />
+            <Route
+            path="/admin/catalogos"
+            element={
+              <>
+                <HeaderAdmin />
+                <AdminCatalogos />
+              </>
+            }
+          />
+
 
 
         </Routes>
