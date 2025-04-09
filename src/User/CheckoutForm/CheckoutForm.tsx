@@ -199,7 +199,7 @@ const CheckoutForm = () => {
 
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
-    window.location.href = "http://localhost:5173/";
+    window.location.href = "https://d3p-divine-design-print.sweet-travelcancun.com/";
   };
 
   return (
