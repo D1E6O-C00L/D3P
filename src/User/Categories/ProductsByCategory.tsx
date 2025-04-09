@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShoppingCart } from "lucide-react";
+import { agregarProductoAlCarrito } from "../../api/cart";
 
 interface Producto {
   id_producto: number;
@@ -42,6 +43,34 @@ const ProductsByCategory = React.memo(() => {
 
     fetchProductos();
   }, [id_categoria]);
+
+  const handleAddToCart = async (id_producto: number) => {
+    const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("usuario") || "{}");
+
+    if (!token) {
+      alert("Debes iniciar sesión para agregar productos al carrito.");
+      return;
+    }
+
+    if (!user || !user.id_usuario) {
+      alert("No se pudo validar el usuario. Por favor, inicia sesión nuevamente.");
+      return;
+    }
+
+    try {
+      const response = await agregarProductoAlCarrito(user.id_usuario, id_producto, 1, token);
+
+      if (response.success) {
+        alert("Producto agregado al carrito");
+      } else {
+        alert(response.message || "No se pudo agregar el producto al carrito.");
+      }
+    } catch (error) {
+      console.error("Error al agregar al carrito:", error);
+      alert("Error al agregar al carrito. Por favor, intenta nuevamente.");
+    }
+  };
 
   return (
     <div className="min-h-screen px-6 py-10 bg-gradient-to-br from-[#0c2c4c] to-[#1a4b7f] text-white">
@@ -98,6 +127,14 @@ const ProductsByCategory = React.memo(() => {
                 <p className="font-semibold text-[#0c2c4c]">
                   ${parseFloat(prod.precio as string).toFixed(2)} MXN
                 </p>
+                <button
+                  className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-md flex items-center justify-center gap-2"
+                  onClick={() => handleAddToCart(prod.id_producto)}
+                  aria-label={`Agregar ${prod.nombre} al carrito`}
+                >
+                  <ShoppingCart size={20} />
+                  <span>Agregar</span>
+                </button>
               </div>
             </div>
           ))}
