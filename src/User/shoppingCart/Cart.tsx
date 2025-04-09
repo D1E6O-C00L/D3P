@@ -1,33 +1,30 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { Trash, Plus, Minus, ShoppingCart, ArrowLeft, AlertTriangle } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
-import { useUser } from "../context/UserContext"
-import axios from "axios"
-
-// Definimos nuestros propios componentes de diálogo sin depender de shadcn/ui
-// ya que parece que tienes problemas con las importaciones
+import { useEffect, useState } from "react";
+import { Trash, Plus, Minus, ShoppingCart, ArrowLeft, AlertTriangle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
+import axios from "axios";
 
 interface CartItem {
-  id_producto: number
-  nombre: string
-  descripcion: string
-  precio: number
-  imagen_url: string
-  stock: number
-  cantidad: number
+  id_producto: number;
+  nombre: string;
+  descripcion: string;
+  precio: number;
+  imagen_url: string;
+  stock: number;
+  cantidad: number;
 }
 
 interface ConfirmDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  description: string
-  onConfirm: () => void
-  confirmText?: string
-  cancelText?: string
-  variant?: "default" | "destructive"
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: string;
+  description: string;
+  onConfirm: () => void;
+  confirmText?: string;
+  cancelText?: string;
+  variant?: "default" | "destructive";
 }
 
 function ConfirmDialog({
@@ -40,7 +37,7 @@ function ConfirmDialog({
   cancelText = "Cancelar",
   variant = "default",
 }: ConfirmDialogProps) {
-  if (!open) return null
+  if (!open) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -72,8 +69,8 @@ function ConfirmDialog({
                 variant === "destructive" ? "bg-red-600 hover:bg-red-700" : "bg-[#0c2c4c] hover:bg-[#1a4b7f]"
               }`}
               onClick={() => {
-                onConfirm()
-                onOpenChange(false)
+                onConfirm();
+                onOpenChange(false);
               }}
             >
               {confirmText}
@@ -82,14 +79,14 @@ function ConfirmDialog({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 function Cart() {
-  const { user } = useUser()
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
-  const [idCarrito, setIdCarrito] = useState<number | null>(null)
-  const navigate = useNavigate()
+  const { user } = useUser();
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [idCarrito, setIdCarrito] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   // State for confirmation dialogs
   const [confirmDialog, setConfirmDialog] = useState({
@@ -99,14 +96,12 @@ function Cart() {
     onConfirm: () => {},
     confirmText: "Confirmar",
     variant: "default" as "default" | "destructive",
-  })
-
-  const [productToRemove, setProductToRemove] = useState<number | null>(null)
+  });
 
   const fetchCartItems = async () => {
     try {
-      const token = localStorage.getItem("token")
-      if (!token || !user?.id_usuario) return
+      const token = localStorage.getItem("token");
+      if (!token || !user?.id_usuario) return;
 
       const response = await axios.get(
         `https://d3p-backend.onrender.com/api/carrito/usuario/${user.id_usuario}/productos`,
@@ -114,30 +109,28 @@ function Cart() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
-      )
+        }
+      );
 
-      const data = response.data
-      setIdCarrito(data.data.id_carrito)
-      setCartItems(data.data.productos)
+      const data = response.data;
+      setIdCarrito(data.data.id_carrito);
+      setCartItems(data.data.productos);
     } catch (error) {
-      console.error("Error al obtener el carrito:", error)
+      console.error("Error al obtener el carrito:", error);
     }
-  }
+  };
 
   useEffect(() => {
     if (user?.id_usuario) {
-      fetchCartItems()
+      fetchCartItems();
     }
-  }, [user?.id_usuario])
+  }, [user?.id_usuario]);
 
   const handleQuantityChange = async (id_producto: number, cantidadActual: number, change: number) => {
-    if (!idCarrito) return
-    const nuevaCantidad = cantidadActual + change
+    if (!idCarrito) return;
+    const nuevaCantidad = cantidadActual + change;
 
     if (nuevaCantidad < 1) {
-      // Show confirmation dialog instead of browser confirm
-      setProductToRemove(id_producto)
       setConfirmDialog({
         open: true,
         title: "Eliminar producto",
@@ -145,92 +138,60 @@ function Cart() {
         onConfirm: () => handleRemoveConfirmed(id_producto),
         confirmText: "Eliminar",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     try {
       await axios.put(
         `https://d3p-backend.onrender.com/api/carrito/${idCarrito}/productos/${id_producto}`,
         { cantidad: nuevaCantidad },
-        { headers: { Authorization: `Bearer ${token}` } },
-      )
-      // Actualiza el carrito en tiempo real
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setCartItems((prevItems) =>
-        prevItems.map((item) => (item.id_producto === id_producto ? { ...item, cantidad: nuevaCantidad } : item)),
-      )
+        prevItems.map((item) => (item.id_producto === id_producto ? { ...item, cantidad: nuevaCantidad } : item))
+      );
     } catch (error) {
-      console.error("Error al actualizar cantidad:", error)
+      console.error("Error al actualizar cantidad:", error);
     }
-  }
-
-  const handleRemove = async (id_producto: number) => {
-    if (!idCarrito) return
-
-    // Show confirmation dialog instead of browser confirm
-    setProductToRemove(id_producto)
-    setConfirmDialog({
-      open: true,
-      title: "Eliminar producto",
-      description: "¿Estás seguro de que deseas eliminar este producto del carrito?",
-      onConfirm: () => handleRemoveConfirmed(id_producto),
-      confirmText: "Eliminar",
-      variant: "destructive",
-    })
-  }
+  };
 
   const handleRemoveConfirmed = async (id_producto: number) => {
-    if (!idCarrito) return
+    if (!idCarrito) return;
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     try {
       await axios.delete(`https://d3p-backend.onrender.com/api/carrito/${idCarrito}/productos/${id_producto}`, {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      // Actualiza el carrito en tiempo real
-      setCartItems((prevItems) => prevItems.filter((item) => item.id_producto !== id_producto))
+      });
+      setCartItems((prevItems) => prevItems.filter((item) => item.id_producto !== id_producto));
     } catch (error) {
-      console.error("Error al eliminar producto:", error)
+      console.error("Error al eliminar producto:", error);
     }
-  }
-
-  const handleVaciarCarrito = async () => {
-    if (!idCarrito) return
-
-    // Show confirmation dialog instead of browser confirm
-    setConfirmDialog({
-      open: true,
-      title: "Vaciar carrito",
-      description: "¿Estás seguro de que deseas vaciar todo el carrito? Esta acción no se puede deshacer.",
-      onConfirm: handleVaciarCarritoConfirmed,
-      confirmText: "Vaciar carrito",
-      variant: "destructive",
-    })
-  }
+  };
 
   const handleVaciarCarritoConfirmed = async () => {
-    if (!idCarrito) return
+    if (!idCarrito) return;
 
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     try {
       await axios.delete(`https://d3p-backend.onrender.com/api/carrito/${idCarrito}/vaciar`, {
         headers: { Authorization: `Bearer ${token}` },
-      })
-      setCartItems([]) // Vacía el carrito en tiempo real
+      });
+      setCartItems([]);
     } catch (error) {
-      console.error("Error al vaciar el carrito:", error)
+      console.error("Error al vaciar el carrito:", error);
     }
-  }
+  };
 
   const handleCheckout = () => {
-    // Redirige a la ruta de Stripe Checkout y pasa el total como estado
-    navigate("/checkout", { state: { total } })
-  }
+    navigate("/checkout", { state: { total } });
+  };
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.precio * item.cantidad, 0)
-  const impuestos = subtotal * 0.16
-  const total = subtotal + impuestos
+  const subtotal = cartItems.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+  const impuestos = subtotal * 0.16;
+  const total = subtotal + impuestos;
 
   return (
     <div className="min-h-screen bg-[#e7edf3] py-8 px-4 sm:px-6 lg:px-8">
@@ -251,7 +212,16 @@ function Cart() {
             </h2>
             {cartItems.length > 0 && (
               <button
-                onClick={handleVaciarCarrito}
+                onClick={() =>
+                  setConfirmDialog({
+                    open: true,
+                    title: "Vaciar carrito",
+                    description: "¿Estás seguro de que deseas vaciar todo el carrito? Esta acción no se puede deshacer.",
+                    onConfirm: handleVaciarCarritoConfirmed,
+                    confirmText: "Vaciar carrito",
+                    variant: "destructive",
+                  })
+                }
                 className="text-red-500 hover:text-red-700 text-sm"
                 aria-label="Vaciar carrito"
               >
@@ -302,7 +272,16 @@ function Cart() {
                     <div className="text-right">
                       <div className="font-medium text-gray-900">${(item.precio * item.cantidad).toFixed(2)} MXN</div>
                       <button
-                        onClick={() => handleRemove(item.id_producto)}
+                        onClick={() =>
+                          setConfirmDialog({
+                            open: true,
+                            title: "Eliminar producto",
+                            description: "¿Estás seguro de que deseas eliminar este producto del carrito?",
+                            onConfirm: () => handleRemoveConfirmed(item.id_producto),
+                            confirmText: "Eliminar",
+                            variant: "destructive",
+                          })
+                        }
                         className="text-red-500 hover:text-red-700 mt-1"
                         aria-label="Eliminar producto"
                       >
@@ -365,7 +344,7 @@ function Cart() {
         variant={confirmDialog.variant}
       />
     </div>
-  )
+  );
 }
 
-export default Cart
+export default Cart;
