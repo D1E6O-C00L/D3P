@@ -6,7 +6,6 @@ import Footer from "./User/ts/footer";
 import Login from "./User/Login/Login";
 import Registration from "./User/Registration/registro";
 import Selection from "./User/ts/Selection";
-//import Categories from "./User/Categories/Categories";
 import Customization from "./User/PersonalizedTShirt/index";
 import PersonalizedCup from "./User/PersonalizedCup/index";
 import Cart from "./User/shoppingCart/Cart";
@@ -14,13 +13,19 @@ import ResetPassword from "./User/Login/ResetPassword";
 import { UserProvider } from "./User/context/UserContext";
 import CategoryList from "./User/Categories/CategoryList";
 import ProductsByCategory from "./User/Categories/ProductsByCategory";
-
+import TopSeller from "./User/TopSellers/TopCart";
 import HeaderAdmin from "./Admin/Principal/HeaderAdmin";
-//import AdminDashboard from "./Admin/Principal/AdminDashboard";
 import AdminProducts from "./Admin/Productos/AdminProducts";
 import AdminPedidos from "./Admin/Pedidos/AdminPedidos";
 import AdminCatalogos from "./Admin/Catalogos/AdminCatalogos";
+import CheckoutForm from "./User/CheckoutForm/CheckoutForm";
 
+// Importa Stripe
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+// Carga tu clave pública de Stripe
+const stripePromise = loadStripe("pk_test_51RBnSm0778qJCLUsPPjcPg9nsItXVR3TwXoeFoT6RvkqXFIscCDcUxFpcvl22XvkdOYNUNuPw6JBOkTHjCGn4QWC00WxOfYVaL");
 
 export default function AppRouter() {
   return (
@@ -47,12 +52,25 @@ export default function AppRouter() {
           <Route path="/personalizedCup" element={<PersonalizedCup />} />
           <Route path="/carrito" element={<Cart />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/TopSellers" element={<TopSeller />} />
+
+          {/* Ruta para el formulario de pago */}
+          <Route
+            path="/checkout"
+            element={
+              <Elements stripe={stripePromise}>
+                <div className="min-h-screen flex items-center justify-center">
+                  <CheckoutForm />
+                </div>
+              </Elements>
+            }
+          />
 
           <Route
             path="/admin"
             element={
               <>
-              <Login />
+                <Login />
               </>
             }
           />
@@ -74,7 +92,7 @@ export default function AppRouter() {
               </>
             }
           />
-            <Route
+          <Route
             path="/admin/catalogos"
             element={
               <>
@@ -83,9 +101,6 @@ export default function AppRouter() {
               </>
             }
           />
-
-
-
         </Routes>
       </Router>
     </UserProvider>

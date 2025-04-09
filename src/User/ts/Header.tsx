@@ -72,9 +72,9 @@ function Header() {
               </Link>
             </li>
             <li>
-              <a href="#" className="hover:text-gray-400 block py-2 md:py-0" aria-label="Ver los productos más vendidos">
+              <Link to="/TopSellers" className="hover:text-gray-400 block py-2 md:py-0">
                 Top Sellers
-              </a>
+              </Link>
             </li>
           </ul>
         </div>

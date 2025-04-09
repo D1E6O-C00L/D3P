@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Trash, Plus, Minus, ShoppingCart, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // Importa useNavigate
 import { useUser } from "../context/UserContext";
 import axios from "axios";
 
@@ -18,6 +18,7 @@ function Cart() {
   const { user } = useUser();
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [idCarrito, setIdCarrito] = useState<number | null>(null);
+  const navigate = useNavigate(); // Inicializa useNavigate
 
   const fetchCartItems = async () => {
     try {
@@ -54,9 +55,14 @@ function Cart() {
   ) => {
     if (!idCarrito) return;
     const nuevaCantidad = cantidadActual + change;
+
     if (nuevaCantidad < 1) {
       const confirmar = confirm("¿Eliminar este producto del carrito?");
       if (!confirmar) return;
+
+      // Si la cantidad es menor a 1, elimina el producto
+      await handleRemove(id_producto);
+      return;
     }
 
     const token = localStorage.getItem("token");
@@ -66,7 +72,14 @@ function Cart() {
         { cantidad: nuevaCantidad },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      fetchCartItems();
+      // Actualiza el carrito en tiempo real
+      setCartItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id_producto === id_producto
+            ? { ...item, cantidad: nuevaCantidad }
+            : item
+        )
+      );
     } catch (error) {
       console.error("Error al actualizar cantidad:", error);
     }
@@ -83,7 +96,10 @@ function Cart() {
         `https://d3p-backend.onrender.com/api/carrito/${idCarrito}/productos/${id_producto}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      fetchCartItems();
+      // Actualiza el carrito en tiempo real
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.id_producto !== id_producto)
+      );
     } catch (error) {
       console.error("Error al eliminar producto:", error);
     }
@@ -100,10 +116,15 @@ function Cart() {
         `https://d3p-backend.onrender.com/api/carrito/${idCarrito}/vaciar`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setCartItems([]);
+      setCartItems([]); // Vacía el carrito en tiempo real
     } catch (error) {
       console.error("Error al vaciar el carrito:", error);
     }
+  };
+
+  const handleCheckout = () => {
+    // Redirige a la ruta de Stripe Checkout y pasa el total como estado
+    navigate("/checkout", { state: { total } });
   };
 
   const subtotal = cartItems.reduce(
@@ -176,7 +197,9 @@ function Cart() {
                       >
                         <Minus size={16} />
                       </button>
-                      <span className="min-w-[20px] text-center">{item.cantidad}</span>
+                      <span className="min-w-[20px] text-center text-black">
+                        {item.cantidad}
+                      </span>
                       <button
                         onClick={() =>
                           handleQuantityChange(item.id_producto, item.cantidad, 1)
@@ -213,7 +236,7 @@ function Cart() {
                 <p className="text-gray-600 mb-6">
                   Parece que aún no has añadido ningún producto a tu carrito.
                 </p>
-                <Link to="/">
+                <Link to="/categories">
                   <button className="bg-[#0c2c4c] hover:bg-[#1a4b7f] text-white px-5 py-2 rounded-md font-medium">
                     Seguir comprando
                   </button>
@@ -247,7 +270,10 @@ function Cart() {
                   </span>
                 </div>
               </div>
-              <button className="w-full mt-4 bg-[#0c2c4c] hover:bg-[#1a4b7f] text-white py-3 rounded-md font-medium">
+              <button
+                onClick={handleCheckout} // Llama a la función handleCheckout
+                className="w-full mt-4 bg-[#0c2c4c] hover:bg-[#1a4b7f] text-white py-3 rounded-md font-medium"
+              >
                 Continuar al pago
               </button>
             </div>
