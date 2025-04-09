@@ -76,7 +76,7 @@ const CartNotificationModal: React.FC<CartModalProps> = ({ isOpen, onClose, prod
               Seguir comprando
             </button>
             <Link
-              to="/cart"
+              to="/carrito"
               className="px-4 py-2 bg-[#0c2c4c] text-white rounded-md hover:bg-[#1a4b7f] transition-colors flex items-center"
             >
               <ShoppingCart size={16} className="mr-2" />
