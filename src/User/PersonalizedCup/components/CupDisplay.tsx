@@ -1,9 +1,10 @@
 "use client";
-
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import { useCustomization } from "../context/CustomizationContext";
 import { X } from "lucide-react";
-import imageCup from "../../../assets/Model-Taza.jpeg";
+import { BASE_CLOUDINARY } from "../../../assets/constants/cloudinary";
+
+const imageCup = `${BASE_CLOUDINARY}/v1751579326/Model-Taza_fbzedi.jpg`;
 
 export default function CupDisplay() {
   const {

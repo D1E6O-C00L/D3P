@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { Trash, Plus, Minus, ShoppingCart, ArrowLeft, AlertTriangle } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";

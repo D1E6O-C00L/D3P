@@ -3,7 +3,9 @@
 import React, { useState, useMemo } from "react";
 import { useCustomization } from "../context/CustomizationContext";
 import { Upload, Type } from "lucide-react";
-import Logo from "../../../assets/Marca.jpg";
+import { BASE_CLOUDINARY } from "../../../assets/constants/cloudinary";
+
+const Logo = `${BASE_CLOUDINARY}/v1751579320/Marca_ib4hnx.jpg`;
 
 export default function CustomizationPanel() {
   const {

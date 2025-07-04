@@ -1,16 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import CamisaC1 from "../../assets/CamisaC1.jpg";
-import CamisaC2 from "../../assets/CamisaC2.jpg";
-import CamisaL1 from "../../assets/CamisaL1.jpg";
-import CamisaL2 from "../../assets/CamisaL2.jpg";
-import CamisaS1 from "../../assets/CamisaS1.jpg";
-import CamisaS2 from "../../assets/CamisaS2.jpg";
-import Taza1 from "../../assets/Taza1.jpg";
-import Taza2 from "../../assets/Taza2.jpg";
-import TazaM1 from "../../assets/TazaM1.jpg";
-import TazaM2 from "../../assets/TazaM2.jpg";
-import TazaS1 from "../../assets/TazaS1.jpg";
-import TazaS2 from "../../assets/TazaS2.jpg";
+import '../../css/index.css';  
+import { BASE_CLOUDINARY } from '../../assets/constants/cloudinary';
 
 function Card() {
   const navigate = useNavigate();
@@ -23,20 +13,20 @@ function Card() {
     {
       title: "Taza Clásica",
       description: "Taza personalizada diseño completamente gratis",
-      imageFront: Taza1,
-      imageBack: Taza2,
+      imageFront: `${BASE_CLOUDINARY}/v1751579326/Taza1_exqngq.jpg`,
+      imageBack: `${BASE_CLOUDINARY}/v1751579326/Taza2_ewphqs.jpg`,
     },
     {
       title: "Taza Magica",
       description: "Incluye caja personalizada diseño de taza y caja completamente gratis",
-      imageFront: TazaM1,
-      imageBack: TazaM2,
+      imageFront: `${BASE_CLOUDINARY}/v1751579326/TazaM1_hqus3z.jpg`,
+      imageBack: `${BASE_CLOUDINARY}/v1751579326/TazaM2_nl72yg.jpg`,
     },
     {
       title: "Taza Scan Me",
       description: "Regala esta canción a tu persona espexial",
-      imageFront: TazaS1,
-      imageBack: TazaS2,
+      imageFront: `${BASE_CLOUDINARY}/v1751579326/TazaS1_rkbs9x.jpg`,
+      imageBack: `${BASE_CLOUDINARY}/v1751579326/TazaS2_lidgev.jpg`,
     },
   ]
 
@@ -45,20 +35,20 @@ function Card() {
     {
       title: "Playera Clásica",
       description: "100% algodón, ideal para un estilo casual y cómodo.",
-      imageFront: CamisaC1,
-      imageBack: CamisaC2,
+      imageFront: `${BASE_CLOUDINARY}/v1751579320/CamisaC1_nl9jbg.jpg`,
+      imageBack: `${BASE_CLOUDINARY}/v1751579319/CamisaC2_gkzsjc.jpg`,
     },
     {
       title: "Playera Deportiva",
       description: "Perfecta para entrenar, hecha con tela transpirable.",
-      imageFront: CamisaL1,
-      imageBack: CamisaL2,
+      imageFront: `${BASE_CLOUDINARY}/v1751579319/CamisaL1_mqmohi.jpg`,
+      imageBack: `${BASE_CLOUDINARY}/c_crop,w_1166,h_1170/v1751579319/CamisaL2_nf4men.jpg`,
     },
     {
       title: "Playera Vintage",
       description: "Un diseño retro para quienes aman el estilo clásico.",
-      imageFront: CamisaS1,
-      imageBack: CamisaS2,
+      imageFront: `${BASE_CLOUDINARY}/v1751579319/CamisaS1_lvnnd7.jpg`,
+      imageBack: `${BASE_CLOUDINARY}/c_crop,w_1145,h_1160/v1751579319/CamisaS2_erkctf.jpg`,
     },
   ];
 

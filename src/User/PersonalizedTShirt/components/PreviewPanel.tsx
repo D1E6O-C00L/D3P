@@ -2,9 +2,11 @@
 
 import { Eye } from "lucide-react";
 import { useCustomization } from "../context/CustomizationContext";
-import imageShirtFront from "../../../assets/model-image.png"; // Imagen de la parte delantera de la playera
-import imageShirtBack from "../../../assets/model-image-back.png"; // Imagen de la parte trasera de la playera
 import { useMemo } from "react";
+import { BASE_CLOUDINARY } from "../../../assets/constants/cloudinary";
+
+const imageShirtFront = `${BASE_CLOUDINARY}/v1751579321/model-image_oijdir.png`; // Imagen de la parte delantera de la playera
+const imageShirtBack = `${BASE_CLOUDINARY}/v1751579321/model-image-back_kqxhko.png`; // Imagen de la parte trasera de la playera
 
 export default function PreviewPanel() {
   const {

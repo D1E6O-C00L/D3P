@@ -1,6 +1,8 @@
-import Icono from "../../assets/ICONO USUARIO.svg";
-import logo from "../../assets/logo.svg";
 import { Link } from "react-router-dom";
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const logo = `${BASE_CLOUDINARY}/v1751579321/logo_igthyq.svg`;
+const Icono = `${BASE_CLOUDINARY}/v1751579320/ICONO_USUARIO_fkqi9q.svg`;
 
 function Header() {
   return (

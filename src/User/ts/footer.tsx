@@ -5,7 +5,9 @@ import {
 import { PiTiktokLogo } from "react-icons/pi";
 import { CiMail } from "react-icons/ci";
 import { FaWhatsapp } from "react-icons/fa";
-import logo from '../../assets/Marca.jpg'; 
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const logo = `${BASE_CLOUDINARY}/v1751579320/Marca_ib4hnx.jpg`;
 
 function Footer() {
   const currentYear = new Date().getFullYear();

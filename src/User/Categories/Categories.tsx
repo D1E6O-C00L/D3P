@@ -1,8 +1,10 @@
-import img1 from "../../assets/impresion.jpg";
-import img2 from "../../assets/personalizacion.jpg";
-import img3 from "../../assets/diseno.jpg";
 import Header from "../ts/Header";
 import Footer from "../ts/footer";
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const img1 = `${BASE_CLOUDINARY}/v1751579320/impresion_eyd24j.jpg`;
+const img2 = `${BASE_CLOUDINARY}/v1751579326/personalizacion_tclyce.jpg`;
+const img3 = `${BASE_CLOUDINARY}/v1751579320/diseno_k7elmk.jpg`;
 
 function Categories() {
   return (

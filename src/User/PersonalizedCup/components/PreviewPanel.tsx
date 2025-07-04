@@ -2,9 +2,10 @@
 
 import { Eye } from "lucide-react";
 import { useCustomization } from "../context/CustomizationContext";
-import imageCup from "../../../assets/Model-Taza.jpeg";
 import { useMemo } from "react";
+import { BASE_CLOUDINARY } from "../../../assets/constants/cloudinary";
 
+const imageCup = `${BASE_CLOUDINARY}/v1751579326/Model-Taza_fbzedi.jpg`;
 export default function PreviewPanel() {
   const {
     showPreview,

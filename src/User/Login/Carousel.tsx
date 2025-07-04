@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import imagen1 from "../../assets/TazaS1.jpg";
-import imagen2 from "../../assets/TazaM1.jpg";
-import imagen3 from "../../assets/TazaM2.jpg";
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const imagen1 = `${BASE_CLOUDINARY}/v1751579327/TazaS1_rkbs9x.jpg`;
+const imagen2 = `${BASE_CLOUDINARY}/v1751579327/TazaM1_hqus3z.jpg`;
+const imagen3 = `${BASE_CLOUDINARY}/v1751579327/TazaM2_nl72yg.jpg`;
 
 function Carousel() {
   const [activeImage, setActiveImage] = useState(0);

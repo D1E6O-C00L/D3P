@@ -4,9 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Link } from "react-router-dom";
 import Carousel from "./Carousel";
-import Logo from "../../assets/logo.svg";
 import { actualizarContraseña } from "../../api/auth";
 import ModalAlert from "../../Modal/ModalAlert";
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const Logo = `${BASE_CLOUDINARY}/v1751579321/logo_igthyq.svg`;
 
 const ResetPassword = React.memo(() => {
   const navigate = useNavigate();

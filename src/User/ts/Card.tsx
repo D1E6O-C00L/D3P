@@ -1,4 +1,6 @@
-import Image from '../../assets/D3P.jpg';
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const Image = `${BASE_CLOUDINARY}/v1751579320/D3P_o3uuho.jpg`;
 
 function Card() {
   return (

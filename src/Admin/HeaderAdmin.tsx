@@ -1,6 +1,8 @@
-import Icono from "../assets/ICONO USUARIO.svg";
-import logo from "../assets/logo.svg";
 import { Link } from "react-router-dom";
+import { BASE_CLOUDINARY } from "../../src/assets/constants/cloudinary";
+
+const ICONO_USUARIO = `${BASE_CLOUDINARY}/v1751579320/ICONO_USUARIO_fkqi9q.svg`;
+const logo = `${BASE_CLOUDINARY}/v1751579321/logo_igthyq.svg`;
 
 function Header() {
   return (
@@ -34,7 +36,7 @@ function Header() {
       </div>
       <Link to="/login">
               <img
-                src={Icono}
+                src={ICONO_USUARIO}
                 className="w-10 h-10 md:w-12 md:h-12 cursor-pointer hover:opacity-80 transition"
                 alt="Usuario"
               />

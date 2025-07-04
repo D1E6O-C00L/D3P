@@ -1,5 +1,4 @@
 "use client";
-
 import { createContext, useContext, useState, useMemo, type ReactNode } from "react";
 
 // Tipos para el contexto

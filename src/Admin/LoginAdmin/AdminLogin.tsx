@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ShieldCheck, ArrowLeft } from "lucide-react";
-import Logo from "../../assets/logo.svg"; // Usa tu logo aquí
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const Logo = `${BASE_CLOUDINARY}/v1751579321/logo_igthyq.svg`;
 
 const AdminLogin = () => {
   const navigate = useNavigate();

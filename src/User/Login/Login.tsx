@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { iniciarSesion } from "../../api/auth";
 import Carousel from "./Carousel";
-import Logo from "../../assets/logo.svg";
 import { ArrowLeft, EyeOff, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import ModalAlert from "../../Modal/ModalAlert";
+import { GoogleLogin } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
+import { iniciarSesion } from "../../api/auth";
+import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+
+const Logo = `${BASE_CLOUDINARY}/v1751579321/logo_igthyq.svg`;
 
 function Login() {
   const navigate = useNavigate();
@@ -19,6 +23,11 @@ function Login() {
   const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Dominio permitido
+  const validarDominio = (email: string): boolean =>
+    /^[\w-.]+@(gmail\.com|upqroo\.edu\.mx)$/i.test(email);
+
+  // LOGIN LOCAL (con backend) 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -28,25 +37,31 @@ function Login() {
       return;
     }
 
+    if (!validarDominio(correo)) {
+      setAlertMessage("Solo se permiten correos @gmail.com o @upqroo.edu.mx");
+      setShowAlert(true);
+      return;
+    }
+
     try {
       setLoading(true);
       const response = await iniciarSesion({ correo, contraseña });
       if (response.success) {
         localStorage.setItem("token", response.token);
+        // Imprime el token en consola
+        console.log("Token login tradicional:", response.token);
         setUser({
           id_usuario: response.usuario.id_usuario,
           nombre: response.usuario.nombre,
           correo: response.usuario.correo,
           rol: response.usuario.rol || "usuario",
         });
-
         navigate("/");
       } else {
-        setAlertMessage(response.message || "Error al iniciar sesión.");
+        setAlertMessage(response.message || "Error al intentar iniciar sesión.");
         setShowAlert(true);
       }
     } catch (error) {
-      console.error(error);
       setAlertMessage("Error al intentar iniciar sesión.");
       setShowAlert(true);
     } finally {
@@ -66,9 +81,18 @@ function Login() {
         </div>
         <div className="text-white text-xl font-semibold mt-2 flex items-center">
           Cargando
-          <span className="w-1.5 h-1.5 bg-white rounded-full ml-1 animate-bounce" style={{ animationDelay: "0ms" }}></span>
-          <span className="w-1.5 h-1.5 bg-white rounded-full ml-1 animate-bounce" style={{ animationDelay: "200ms" }}></span>
-          <span className="w-1.5 h-1.5 bg-white rounded-full ml-1 animate-bounce" style={{ animationDelay: "400ms" }}></span>
+          <span
+            className="w-1.5 h-1.5 bg-white rounded-full ml-1 animate-bounce"
+            style={{ animationDelay: "0ms" }}
+          ></span>
+          <span
+            className="w-1.5 h-1.5 bg-white rounded-full ml-1 animate-bounce"
+            style={{ animationDelay: "200ms" }}
+          ></span>
+          <span
+            className="w-1.5 h-1.5 bg-white rounded-full ml-1 animate-bounce"
+            style={{ animationDelay: "400ms" }}
+          ></span>
         </div>
       </div>
     );
@@ -76,22 +100,32 @@ function Login() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-[#0c2c4c] to-[#1a4b7f]">
+      {/* Back button */}
       <div className="text-white p-4">
-        <Link to="/" className="flex items-center text-white hover:text-gray-300 transition" aria-label="Regresar a la página principal">
+        <Link
+          to="/"
+          className="flex items-center text-white hover:text-gray-300 transition"
+          aria-label="Regresar a la página principal"
+        >
           <ArrowLeft className="h-5 w-5 mr-2" />
           <span className="font-medium">Regresar</span>
         </Link>
       </div>
 
+      {/* Card */}
       <div className="flex-1 flex justify-center items-center p-4">
         <div className="w-full max-w-4xl flex flex-col md:flex-row rounded-xl overflow-hidden shadow-2xl">
+          {/* Left: carousel */}
           <div className="w-full md:w-1/2 h-48 sm:h-64 md:h-auto">
             <Carousel />
           </div>
 
+          {/* Right: form */}
           <div className="bg-white flex flex-col justify-between items-center text-[#1a4b7f] rounded-b-xl md:rounded-b-none md:rounded-r-xl w-full md:w-1/2 p-4 sm:p-6 md:p-8">
             <div className="text-center mb-4 w-full">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">Iniciar Sesión</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4">
+                Iniciar Sesión
+              </h2>
               <img
                 src={Logo || "/placeholder.svg"}
                 alt="Logo de la empresa"
@@ -100,12 +134,16 @@ function Login() {
               />
               <div className="text-sm md:text-base">
                 <p>¿Aún no tienes una cuenta?</p>
-                <Link to="/registration" className="underline hover:text-[#0c2c4c]">
+                <Link
+                  to="/registration"
+                  className="underline hover:text-[#0c2c4c]"
+                >
                   Registrarse
                 </Link>
               </div>
             </div>
 
+            {/* Form local */}
             <div className="w-full my-4 sm:my-6">
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <input
@@ -130,11 +168,21 @@ function Login() {
                   />
                   <button
                     type="button"
-                    onClick={() => setMostrarContraseña(!mostrarContraseña)}
+                    onClick={() =>
+                      setMostrarContraseña(!mostrarContraseña)
+                    }
                     className="absolute right-2 top-1/2 transform -translate-y-1/2 text-[#1a4b7f]"
-                    aria-label={mostrarContraseña ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    aria-label={
+                      mostrarContraseña
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                    }
                   >
-                    {mostrarContraseña ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {mostrarContraseña ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
 
@@ -147,8 +195,62 @@ function Login() {
               </form>
             </div>
 
+            {/* Google button */}
+            <div
+              className="w-full mt-6 flex justify-center items-center"
+              style={{
+                padding: "10px",
+                borderRadius: "15px",
+                border: "2px solid #ddd",
+              }}
+            >
+              <div className="w-full max-w-xs mt-4">
+                <GoogleLogin
+                  onSuccess={(credentialResponse) => {
+                    if (!credentialResponse.credential) {
+                      setAlertMessage(
+                        "No se pudo obtener el token de Google."
+                      );
+                      setShowAlert(true);
+                      return;
+                    }
+                    const decoded: any = jwtDecode(credentialResponse.credential);
+                    const email = decoded.email;
+
+                    if (validarDominio(email)) {
+                      localStorage.setItem("token", credentialResponse.credential);
+                      // Imprime el token de Google en consola
+                      console.log("Token login Google:", credentialResponse.credential);
+                      setUser({
+                        id_usuario: decoded.sub,
+                        nombre: decoded.name,
+                        correo: email,
+                        rol: "usuario",
+                      });
+                      navigate("/");
+                    } else {
+                      setAlertMessage("Solo se permiten correos @gmail.com o @upqroo.edu.mx");
+                      setShowAlert(true);
+                    }
+                  }}
+                  onError={() => {
+                    setAlertMessage("Error en el login de Google");
+                    setShowAlert(true);
+                  }}
+                  useOneTap
+                  shape="pill"
+                  size="large"
+                  theme="filled_blue"
+                />
+              </div>
+            </div>
+
+            {/* Forgot password */}
             <div className="text-center w-full">
-              <Link to="/reset-password" className="text-sm md:text-base underline hover:text-[#0c2c4c]">
+              <Link
+                to="/reset-password"
+                className="text-sm md:text-base underline hover:text-[#0c2c4c]"
+              >
                 ¿Olvidaste tu contraseña?
               </Link>
             </div>
@@ -156,7 +258,12 @@ function Login() {
         </div>
       </div>
 
-      {showAlert && <ModalAlert message={alertMessage} onClose={() => setShowAlert(false)} />}
+      {showAlert && (
+        <ModalAlert
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 }
