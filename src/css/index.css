@@ -9,10 +9,37 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #0c2c4c;
+  background-color: transparent;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+.marquee-container {
+  width: 99vw; /* fuerza a usar TODO el ancho de pantalla */
+  overflow: hidden;
+  background-color: #fff;
+  color: #0c2c4c;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  position: relative;
+}
+
+.marquee-text {
+  display: inline-block;
+  white-space: nowrap;
+  padding-left: 100vw; /* sale desde fuera del lado derecho */
+  animation: scroll-full 15s linear infinite;
+}
+
+@keyframes scroll-full {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }

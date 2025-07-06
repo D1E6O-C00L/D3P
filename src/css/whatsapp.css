@@ -1,0 +1,43 @@
+.whatsapp-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #25D366;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+}
+
+.whatsapp-icon img {
+  width: 30px;
+  height: 30px;
+}
+
+.whatsapp-form {
+  margin: 20px;
+}
+
+.whatsapp-form form {
+  display: flex;
+  flex-direction: column;
+}
+
+.whatsapp-form input,
+.whatsapp-form textarea {
+  margin-bottom: 10px;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.whatsapp-form button {
+  padding: 10px 20px;
+  background-color: #25D366;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.whatsapp-form button:hover {
+  background-color: #128C7E;
+}

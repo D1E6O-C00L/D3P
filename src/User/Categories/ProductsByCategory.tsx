@@ -115,7 +115,7 @@ const ProductsByCategory = React.memo(() => {
 
       try {
         setIsLoading(true)
-        const res = await axios.get(`https://d3p-backend.onrender.com/api/categorias/categoria/${id_categoria}`)
+        const res = await axios.get(`http://localhost:8888/api/categorias/categoria/${id_categoria}`)
         if (isMounted) {
           setProductos(res.data.data || [])
           setError(null)

@@ -104,7 +104,7 @@ const TopCart: React.FC = () => {
   useEffect(() => {
     const fetchTopSellers = async () => {
       try {
-        const response = await axios.get("https://d3p-backend.onrender.com/api/productos/destacados")
+        const response = await axios.get("http://localhost:8888/api/productos/destacados")
 
         if (response.data.success && Array.isArray(response.data.data)) {
           setTopSellers(response.data.data)

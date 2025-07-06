@@ -103,7 +103,7 @@ function Cart() {
       if (!token || !user?.id_usuario) return;
 
       const response = await axios.get(
-        `https://d3p-backend.onrender.com/api/carrito/usuario/${user.id_usuario}/productos`,
+        `http://localhost:8888/api/carrito/usuario/${user.id_usuario}/productos`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -144,7 +144,7 @@ function Cart() {
     const token = localStorage.getItem("token");
     try {
       await axios.put(
-        `https://d3p-backend.onrender.com/api/carrito/${idCarrito}/productos/${id_producto}`,
+        `http://localhost:8888/api/carrito/${idCarrito}/productos/${id_producto}`,
         { cantidad: nuevaCantidad },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -161,7 +161,7 @@ function Cart() {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`https://d3p-backend.onrender.com/api/carrito/${idCarrito}/productos/${id_producto}`, {
+      await axios.delete(`http://localhost:8888/api/carrito/${idCarrito}/productos/${id_producto}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCartItems((prevItems) => prevItems.filter((item) => item.id_producto !== id_producto));
@@ -175,7 +175,7 @@ function Cart() {
 
     const token = localStorage.getItem("token");
     try {
-      await axios.delete(`https://d3p-backend.onrender.com/api/carrito/${idCarrito}/vaciar`, {
+      await axios.delete(`http://localhost:8888/api/carrito/${idCarrito}/vaciar`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setCartItems([]);

@@ -170,7 +170,7 @@ const CheckoutForm = () => {
 
     try {
       const response = await axios.post(
-        "https://d3p-backend.onrender.com/api/stripe/crear-pago",
+        "http://localhost:8888/api/stripe/crear-pago",
         {
           amount: total,
           currency: "mxn",
@@ -181,7 +181,7 @@ const CheckoutForm = () => {
 
       if (response.data.success) {
         await axios.delete(
-          `https://d3p-backend.onrender.com/api/carrito/vaciar/${user.id_usuario}`
+          `http://localhost:8888/api/carrito/vaciar/${user.id_usuario}`
         );
         setShowSuccessModal(true);
       } else {

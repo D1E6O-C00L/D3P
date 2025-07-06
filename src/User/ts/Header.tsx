@@ -11,16 +11,20 @@ import {
 import { useUser } from "../context/UserContext";
 import { useState, useEffect, useRef } from "react";
 import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
+import { useCurrency } from "../../context/CurrencyContext";   // 👈  NEW
 
 const logo = `${BASE_CLOUDINARY}/v1751579321/logo_igthyq.svg`;
 const Icono = `${BASE_CLOUDINARY}/v1751579320/ICONO_USUARIO_fkqi9q.svg`;
 
 function Header() {
   const { user, logout } = useUser();
+  const { currency, setCurrency } = useCurrency();            // 👈  NEW
   const navigate = useNavigate();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   const menuRef = useRef<HTMLDivElement | null>(null);
   const searchRef = useRef<HTMLDivElement | null>(null);
 
@@ -34,7 +38,10 @@ function Header() {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
         setIsMenuOpen(false);
       }
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setIsSearchOpen(false);
       }
     };
@@ -58,7 +65,9 @@ function Header() {
       <button
         onClick={() => setIsNavMenuOpen(!isNavMenuOpen)}
         className="ml-1 p-1 md:hidden rounded-md hover:bg-gray-100"
-        aria-label={isNavMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+        aria-label={
+          isNavMenuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"
+        }
       >
         {isNavMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
       </button>
@@ -77,12 +86,18 @@ function Header() {
               </Link>
             </li>
             <li>
-              <Link to="/Categories" className="hover:text-gray-400 block py-1 md:py-0">
+              <Link
+                to="/Categories"
+                className="hover:text-gray-400 block py-1 md:py-0"
+              >
                 Categorías
               </Link>
             </li>
             <li>
-              <Link to="/TopSellers" className="hover:text-gray-400 block py-1 md:py-0">
+              <Link
+                to="/TopSellers"
+                className="hover:text-gray-400 block py-1 md:py-0"
+              >
                 Top Sellers
               </Link>
             </li>
@@ -92,7 +107,7 @@ function Header() {
 
       {/* Parte derecha */}
       <div className="flex items-center gap-1 sm:gap-2 ml-auto">
-        {/* Buscador */}
+        {/* Buscador desktop */}
         <div className="relative hidden sm:block sm:w-44 md:w-64 lg:w-80">
           <input
             type="text"
@@ -129,9 +144,24 @@ function Header() {
         </div>
 
         {/* Carrito */}
-        <Link to="/carrito" className="flex items-center justify-center" aria-label="Ir al carrito de compras">
+        <Link
+          to="/carrito"
+          className="flex items-center justify-center"
+          aria-label="Ir al carrito de compras"
+        >
           <ShoppingBag className="w-6 h-6 md:w-7 md:h-7 cursor-pointer hover:opacity-80 transition" />
         </Link>
+
+        {/* Selector de moneda */}
+        <select
+          value={currency}
+          onChange={(e) => setCurrency(e.target.value as "MXN" | "USD")}
+          className="bg-[#0c2c4c] border border-white text-white text-xs px-1 rounded-md h-6 cursor-pointer"
+          title="Moneda"
+        >
+          <option value="MXN">MXN</option>
+          <option value="USD">USD</option>
+        </select>
 
         {/* Usuario */}
         {user ? (
@@ -141,7 +171,11 @@ function Header() {
               className="cursor-pointer"
               aria-label="Abrir menú de usuario"
             >
-              <img src={Icono} className="w-7 h-7 md:w-8 md:h-8 hover:opacity-80 transition" alt="Usuario" />
+              <img
+                src={Icono}
+                className="w-7 h-7 md:w-8 md:h-8 hover:opacity-80 transition"
+                alt="Usuario"
+              />
             </div>
             {isMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg p-3 z-10 text-xs">
@@ -166,7 +200,11 @@ function Header() {
           </div>
         ) : (
           <Link to="/Login" aria-label="Iniciar sesión">
-            <img src={Icono} className="w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:opacity-80 transition" alt="Usuario" />
+            <img
+              src={Icono}
+              className="w-7 h-7 md:w-8 md:h-8 cursor-pointer hover:opacity-80 transition"
+              alt="Usuario"
+            />
           </Link>
         )}
       </div>

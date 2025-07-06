@@ -29,7 +29,7 @@ const AdminProducts = () => {
   const fetchProductos = async (page = 1) => {
     try {
       setLoading(true);
-      const res = await axios.get(`https://d3p-backend.onrender.com/api/productos?page=${page}&limit=9`);
+      const res = await axios.get(`http://localhost:8888/api/productos?page=${page}&limit=9`);
       setProductos(res.data.data);
       setFiltered(res.data.data);
       setTotalPages(res.data.pagination.totalPages);

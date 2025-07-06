@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://d3p-backend.onrender.com/api/auth';
+const API_URL = 'http://localhost:8888/api/auth';
 
 // Función para registrar un usuario
 export const registrarUsuario = async (datos: {
@@ -17,6 +17,7 @@ export const registrarUsuario = async (datos: {
 export const iniciarSesion = async (datos: {
   correo: string;
   contraseña: string;
+  captchaToken: string;  // 👈 AÑADIDO
 }) => {
   const res = await axios.post(`${API_URL}/login`, datos);
   return res.data; 
