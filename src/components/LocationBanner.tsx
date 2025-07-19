@@ -15,7 +15,7 @@ interface Clima {
 export default function LocationBanner() {
   const [ubi, setUbi] = useState<Ubicacion | null>(null);
   const [clima, setClima] = useState<Clima | null>(null);
-  const [fx, setFx] = useState<number | null>(null);   // 👈 tipo de cambio real
+  const [fx, setFx] = useState<number | null>(null);   // tipo de cambio real
 
   useEffect(() => {
     (async () => {

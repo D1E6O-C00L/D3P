@@ -22,6 +22,25 @@ export async function getProductById(id: number) {
   }
 }
 
+export async function toggleProductoActivo(id: number, activo: boolean, token: string) {
+  try {
+    const res = await fetch(`${API_URL}/${id}/estado`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ activo }),
+    });
+
+    return await res.json();
+  } catch (error) {
+    console.error("Error al cambiar estado activo:", error);
+    throw error;
+  }
+}
+
+
 export async function createProduct(producto: any, token: string) {
   try {
     const res = await fetch(API_URL, {
