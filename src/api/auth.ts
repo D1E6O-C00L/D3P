@@ -31,6 +31,7 @@ export const actualizarContraseña = async (datos: {
   const res = await axios.post(`${API_URL}/update-password`, datos);
   return res.data; // Retorna la respuesta del backend (mensaje de éxito o error)
 };
+
 // Obtener todos los usuarios
 export const obtenerUsuarios = async (token: string) => {
   const res = await axios.get(`${API_URL}/usuarios`, {
@@ -49,4 +50,69 @@ export const darDeBajaUsuario = async (id_usuario: number, token: string) => {
     },
   });
   return res.data;
+};
+
+// Cambiar estado activo/inactivo de un usuario
+export const toggleActivoUsuario = async (id: number, activo: boolean, token: string) => {
+  try {
+    const response = await axios.patch(
+      `${API_URL}/usuarios/${id}/estado`,
+      { activo },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error al cambiar el estado del usuario:', error);
+    throw error;
+  }
+};
+
+export const cambiarRolUsuario = async (id: number, nuevoRol: "usuario" | "admin", token: string) => {
+  try {
+    const res = await axios.patch(
+      `${API_URL}/usuarios/${id}/rol`,  // Asegúrate de que este endpoint esté configurado correctamente
+      { rol: nuevoRol },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("Error al cambiar rol de usuario:", error);
+    throw error;
+  }
+};
+
+const cambiarRol = async (id: number, rol: string) => {
+  const token = localStorage.getItem("admin_token");
+  if (!token || token.length < 10) {
+    alert("Token inválido. Inicia sesión como administrador.");
+    return;
+  }
+
+  try {
+    const response = await axios.patch(
+      `http://localhost:8888/api/usuarios/${id}/rol`, // Ruta de la API
+      { rol }, // El rol que queremos asignar
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (response.status === 200) {
+      alert("Rol actualizado correctamente");
+      // Aquí puedes hacer una recarga o actualización de la lista de usuarios
+    }
+  } catch (error) {
+    console.error("Error al cambiar el rol:", error);
+    alert("Error al cambiar el rol");
+  }
 };

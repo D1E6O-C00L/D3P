@@ -1,10 +1,10 @@
-"use client"
-
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import axios from "axios"
 import { ArrowLeft, ShoppingCart, CheckCircle, X } from "lucide-react"
 import { agregarProductoAlCarrito } from "../../api/cart"
+import React from "react";
+
 
 // Definir la interfaz de Producto
 interface Producto {
@@ -13,6 +13,7 @@ interface Producto {
   descripcion: string
   precio: number | string
   imagen_url: string
+  activo: number;
 }
 
 // Componente Modal para notificación de producto agregado
@@ -98,7 +99,7 @@ const ProductsByCategory = React.memo(() => {
   // Estado para el modal
   const [modalOpen, setModalOpen] = useState(false)
   const [addedProduct, setAddedProduct] = useState("")
-  
+
   // Estado para la alerta de error
   const [showAlert, setShowAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState("")
@@ -117,7 +118,9 @@ const ProductsByCategory = React.memo(() => {
         setIsLoading(true)
         const res = await axios.get(`http://localhost:8888/api/categorias/categoria/${id_categoria}`)
         if (isMounted) {
-          setProductos(res.data.data || [])
+          // Filtra solo los productos activos
+          const activeProducts = res.data.data.filter((product: Producto) => product.activo === 1)
+          setProductos(activeProducts)
           setError(null)
         }
       } catch (err) {

@@ -8,13 +8,15 @@ import Header from "../ts/Header"
 import { Link } from "react-router-dom"
 
 interface Product {
-  id_producto: number
-  nombre: string
-  descripcion: string
-  precio: string
-  stock: number
-  imagen_url: string
+  id_producto: number;
+  nombre: string;
+  descripcion: string;
+  precio: string;
+  stock: number;
+  imagen_url: string;
+  activo: number; 
 }
+
 
 // Componente Modal para notificación de producto agregado
 interface CartModalProps {
@@ -101,27 +103,30 @@ const TopCart: React.FC = () => {
   const [showAlert, setShowAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState("")
 
-  useEffect(() => {
-    const fetchTopSellers = async () => {
-      try {
-        const response = await axios.get("http://localhost:8888/api/productos/destacados")
+useEffect(() => {
+  const fetchTopSellers = async () => {
+    try {
+      const response = await axios.get("http://localhost:8888/api/productos/destacados")
 
-        if (response.data.success && Array.isArray(response.data.data)) {
-          setTopSellers(response.data.data)
-        } else {
-          console.error("La respuesta no contiene un array válido:", response.data)
-          setTopSellers([])
-        }
-      } catch (error) {
-        console.error("Error fetching top sellers:", error)
+      if (response.data.success && Array.isArray(response.data.data)) {
+        // Filtrar solo los productos activos
+        const activeProducts = response.data.data.filter((product: Product) => product.activo === 1)
+        setTopSellers(activeProducts) // Asignar solo los productos activos
+      } else {
+        console.error("La respuesta no contiene un array válido:", response.data)
         setTopSellers([])
-      } finally {
-        setLoading(false)
       }
+    } catch (error) {
+      console.error("Error fetching top sellers:", error)
+      setTopSellers([])
+    } finally {
+      setLoading(false)
     }
+  }
 
-    fetchTopSellers()
-  }, [])
+  fetchTopSellers()
+}, [])
+
 
   const handleAddToCart = async (id_producto: number, nombre: string) => {
     const token = localStorage.getItem("token")
