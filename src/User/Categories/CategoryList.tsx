@@ -20,6 +20,7 @@ interface Categoria {
   descripcion: string;
 }
 
+
 const getCategoryIcon = (categoryName: string) => {
   const name = categoryName.toLowerCase();
 

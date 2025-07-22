@@ -31,3 +31,22 @@ export const actualizarContraseña = async (datos: {
   const res = await axios.post(`${API_URL}/update-password`, datos);
   return res.data; // Retorna la respuesta del backend (mensaje de éxito o error)
 };
+// Obtener todos los usuarios
+export const obtenerUsuarios = async (token: string) => {
+  const res = await axios.get(`${API_URL}/usuarios`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data; // 👈 muy importante
+};
+
+// Dar de baja (eliminar) un usuario
+export const darDeBajaUsuario = async (id_usuario: number, token: string) => {
+  const res = await axios.delete(`http://localhost:8888/api/usuarios/${id_usuario}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return res.data;
+};

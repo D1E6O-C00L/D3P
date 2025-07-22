@@ -18,7 +18,7 @@ const Icono = `${BASE_CLOUDINARY}/v1751579320/ICONO_USUARIO_fkqi9q.svg`;
 
 function Header() {
   const { user, logout } = useUser();
-  const { currency, setCurrency } = useCurrency();            // 👈  NEW
+  const { currency, setCurrency } = useCurrency();            
   const navigate = useNavigate();
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -107,16 +107,6 @@ function Header() {
 
       {/* Parte derecha */}
       <div className="flex items-center gap-1 sm:gap-2 ml-auto">
-        {/* Buscador desktop */}
-        <div className="relative hidden sm:block sm:w-44 md:w-64 lg:w-80">
-          <input
-            type="text"
-            placeholder="Buscar..."
-            className="w-full text-[#0c2c4c] p-1 pl-8 border border-[#0c2c4c] rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-[#0c2c4c] transition duration-300 h-7"
-            aria-label="Buscar productos"
-          />
-          <Search className="absolute left-2 top-1.5 w-4 h-4 text-gray-500" />
-        </div>
 
         {/* Buscador móvil */}
         <div className="sm:hidden relative" ref={searchRef}>

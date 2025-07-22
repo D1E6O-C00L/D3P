@@ -75,40 +75,4 @@ export async function updateProduct(id: number, updates: any, token: string) {
   }
 }
 
-export async function deleteProduct(id: number, token: string) {
-  try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Error al eliminar producto");
-
-    return data;
-  } catch (error) {
-    console.error("Error al eliminar producto:", error);
-    throw error;
-  }
-}
-
-
-export async function deleteManyProducts(ids: number[], token: string) {
-    try {
-      const res = await fetch(`http://localhost:8888/api/productos/eliminar-todos`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ ids }), // Mandamos los IDs como array
-      });
-  
-      return await res.json();
-    } catch (error) {
-      console.error("Error al eliminar múltiples productos:", error);
-    }
-  }
   

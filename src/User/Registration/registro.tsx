@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { registrarUsuario } from "../../api/auth";
 import { FiArrowLeft } from "react-icons/fi";
 import { Eye, EyeOff } from "lucide-react";
-import ModalAlert from "../../Modal/ModalAlert"; // asegúrate de que exista
+import Swal from "sweetalert2";
 
 const Registro = () => {
   const navigate = useNavigate();
@@ -17,23 +17,24 @@ const Registro = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-
-  const mostrarAlerta = (msg: string) => {
-    setAlertMessage(msg);
-    setShowAlert(true);
+  const mostrarAlerta = (mensaje: string, tipo: "success" | "error" | "warning" = "error") => {
+    Swal.fire({
+      title: mensaje,
+      icon: tipo,
+      confirmButtonColor: "#1a4b7f",
+      confirmButtonText: "Aceptar",
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!nombre || !apellido || !correo || !contraseña || !direccion || !confirmarContraseña) {
-      return mostrarAlerta("Todos los campos son obligatorios.");
+      return mostrarAlerta("Todos los campos son obligatorios.", "warning");
     }
 
     if (contraseña !== confirmarContraseña) {
-      return mostrarAlerta("Las contraseñas no coinciden.");
+      return mostrarAlerta("Las contraseñas no coinciden.", "error");
     }
 
     try {
@@ -41,19 +42,23 @@ const Registro = () => {
       const response = await registrarUsuario(datos);
 
       if (response.success) {
-        navigate("/login");
+        Swal.fire({
+          title: "Registro exitoso",
+          icon: "success",
+          confirmButtonColor: "#1a4b7f",
+          confirmButtonText: "Ir al login",
+        }).then(() => navigate("/login"));
       } else {
         mostrarAlerta(response.message || "Error al registrar usuario.");
       }
     } catch (error) {
       console.error(error);
-      mostrarAlerta("Error al registrar usuario");
+      mostrarAlerta("Error al registrar usuario.");
     }
   };
 
   return (
     <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0c2c4c] to-[#1a4b7f] px-4">
-      {/* Botón de regresar */}
       <div className="absolute top-4 left-4 text-white">
         <Link
           to="/login"
@@ -65,7 +70,6 @@ const Registro = () => {
         </Link>
       </div>
 
-      {/* Formulario de registro */}
       <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-[#0c2c4c] text-center mb-6">
           Crear cuenta
@@ -102,7 +106,6 @@ const Registro = () => {
             aria-label="Correo electrónico"
           />
 
-          {/* Campo de contraseña */}
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -121,7 +124,6 @@ const Registro = () => {
             </span>
           </div>
 
-          {/* Campo de confirmar contraseña */}
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
@@ -140,7 +142,6 @@ const Registro = () => {
             </span>
           </div>
 
-          {/* Botón de registro */}
           <button
             type="submit"
             className="w-full bg-[#0c2c4c] text-white font-bold py-2 rounded-md hover:bg-[#1a4b7f] transition"
@@ -150,14 +151,6 @@ const Registro = () => {
           </button>
         </form>
       </div>
-
-      {/* Modal de alerta */}
-      {showAlert && (
-        <ModalAlert
-          message={alertMessage}
-          onClose={() => setShowAlert(false)}
-        />
-      )}
     </div>
   );
 };

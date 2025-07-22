@@ -1,172 +1,284 @@
-import { useEffect, useState } from "react";
-import { Search, Plus, Pencil } from "lucide-react";
-import axios from "axios";
-import { toggleProductoActivo } from "../../api/products"; // Asegúrate que esta ruta sea correcta según tu estructura
+"use client"
+
+import { useEffect, useState } from "react"
+import { Search, Pencil, Package, Eye, EyeOff } from "lucide-react"
+import { getAllProducts, toggleProductoActivo } from "../../api/products"
 
 interface Producto {
-  id_producto: number;
-  nombre: string;
-  descripcion: string;
-  precio: number;
-  stock: number;
-  imagen_url: string;
-  categoria_nombre: string;
-  activo: boolean;
+  id_producto: number
+  nombre: string
+  descripcion: string
+  precio: number | string
+  stock: number
+  imagen_url: string
+  categoria_nombre: string
+  activo: boolean
 }
 
 const AdminProducts = () => {
-  const [productos, setProductos] = useState<Producto[]>([]);
-  const [filtered, setFiltered] = useState<Producto[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [productos, setProductos] = useState<Producto[]>([])
+  const [filtered, setFiltered] = useState<Producto[]>([])
+  const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [showSearch, setShowSearch] = useState(false)
 
-  const fetchProductos = async (page = 1) => {
+  const fetchProductos = async () => {
     try {
-      setLoading(true);
-      const res = await axios.get(`http://localhost:8888/api/productos?page=${page}&limit=9`);
-      setProductos(res.data.data);
-      setFiltered(res.data.data);
-      setTotalPages(res.data.pagination.totalPages);
-    } catch (error) {
-      console.error("Error al cargar productos", error);
+      setLoading(true)
+      const res = await getAllProducts()
+      setProductos(res)
+      setFiltered(res)
+    } catch (err) {
+      console.error("Error al cargar productos:", err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    const filteredResults = productos.filter((p) =>
-      p.nombre.toLowerCase().includes(term.toLowerCase())
-    );
-    setFiltered(filteredResults);
-  };
-
-const toggleActivo = async (producto: Producto) => {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) return alert("No autorizado");
-
-    const nuevoEstado = !producto.activo;
-
-    const respuesta = await toggleProductoActivo(producto.id_producto, nuevoEstado, token);
-
-    if (respuesta.success) {
-      // 🔁 Recargar productos desde el backend con el nuevo estado
-      fetchProductos(currentPage);
-    } else {
-      alert(respuesta.message || "Error al actualizar estado");
-    }
-  } catch (error) {
-    console.error("Error al cambiar estado activo:", error);
+    setSearchTerm(term)
+    const resultados = productos.filter((p) => p.nombre.toLowerCase().includes(term.toLowerCase()))
+    setFiltered(resultados)
   }
-};
 
+  const toggleActivo = async (producto: Producto) => {
+    const token = localStorage.getItem("admin_token")
+    if (!token || token.length < 10) {
+      alert("Token inválido. Inicia sesión como administrador.")
+      return
+    }
+    try {
+      const nuevoEstado = !producto.activo
+      const res = await toggleProductoActivo(producto.id_producto, nuevoEstado, token)
+      if (res.success) {
+        await fetchProductos()
+      } else {
+        alert(res.message || "No se pudo actualizar el estado.")
+      }
+    } catch (err) {
+      console.error("Error al cambiar estado activo:", err)
+    }
+  }
 
   useEffect(() => {
-    fetchProductos(currentPage);
-  }, [currentPage]);
+    fetchProductos()
+  }, [])
 
   return (
-    <div className="p-6 bg-amber-50 min-h-screen">
-      <h2 className="text-3xl font-bold text-center text-[#0c2c4c] mb-6">Productos</h2>
-
-      <div className="flex justify-between items-center mb-4 gap-2">
-        <div className="flex gap-2">
-          <button onClick={() => setShowSearch(!showSearch)}>
-            <Search className="text-[#0c2c4c] cursor-pointer" />
-          </button>
-          <Plus className="text-[#0c2c4c] cursor-pointer" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 text-center mb-2">Gestión de Productos</h2>
+          <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 mx-auto rounded-full"></div>
         </div>
-      </div>
 
-      <div
-        className={`transition-all duration-500 overflow-hidden ${
-          showSearch ? "max-h-20 opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
-          placeholder="Buscar productos..."
-          className="w-full text-[#0c2c4c] mb-4 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1a4b7f]"
-        />
-      </div>
+        {/* Action Bar */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-8">
+          <div className="flex justify-between items-center">
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowSearch(!showSearch)}
+                className="flex items-center justify-center w-12 h-12 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all duration-200 group"
+              >
+                <Search className="w-5 h-5 text-slate-600 group-hover:text-slate-800" />
+              </button>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-slate-500 font-medium">
+                {filtered.length} producto{filtered.length !== 1 ? "s" : ""} encontrado
+                {filtered.length !== 1 ? "s" : ""}
+              </div>
+              <div className="flex items-center gap-2 text-sm text-slate-600">
+                <Package className="w-4 h-4" />
+                <span className="font-medium">Total: {productos.length}</span>
+              </div>
+            </div>
+          </div>
 
-      <div className="bg-white rounded-xl shadow overflow-auto">
-        {loading ? (
-          <p className="text-center text-[#0c2c4c] py-10">Cargando productos...</p>
-        ) : (
-          <table className="w-full text-sm text-left text-[#0c2c4c]">
-            <thead className="text-xs uppercase bg-[#1a4b7f] text-white">
-              <tr>
-                <th className="px-4 py-3">Imagen</th>
-                <th className="px-4 py-3">Nombre</th>
-                <th className="px-4 py-3">Precio</th>
-                <th className="px-4 py-3">Stock</th>
-                <th className="px-4 py-3">Activo</th>
-                <th className="px-4 py-3">Acciones</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filtered.map((producto) => (
-                <tr key={producto.id_producto}>
-                  <td className="px-4 py-2">
-                    <img
-                      src={producto.imagen_url || "/placeholder.svg"}
-                      alt={producto.nombre}
-                      className="w-16 h-16 object-cover rounded"
-                    />
-                  </td>
-                  <td className="px-4 py-2 font-semibold">{producto.nombre}</td>
-                  <td className="px-4 py-2">${producto.precio}</td>
-                  <td className="px-4 py-2">{producto.stock}</td>
-                  <td className="px-4 py-2">
-                    <span
-                      className={`px-2 py-1 text-xs font-bold rounded-full ${
-                        producto.activo ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"
+          {/* Search Bar */}
+          <div
+            className={`transition-all duration-300 ease-in-out ${
+              showSearch ? "max-h-20 opacity-100 mt-6" : "max-h-0 opacity-0 mt-0"
+            } overflow-hidden`}
+          >
+            <div className="relative max-w-md">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => handleSearch(e.target.value)}
+                placeholder="Buscar productos..."
+                className="w-full pl-12 pr-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white transition-all duration-200"
+              />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
+            </div>
+          </div>
+        </div>
+
+        {/* Products Table */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          {loading ? (
+            <div className="py-16 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4">
+                <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <p className="text-slate-600 font-medium">Cargando productos...</p>
+            </div>
+          ) : filtered.length === 0 ? (
+            <div className="py-16 text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-slate-100 rounded-full mb-4">
+                <Package className="w-6 h-6 text-slate-400" />
+              </div>
+              <p className="text-slate-600 font-medium">No se encontraron productos</p>
+              <p className="text-slate-400 text-sm mt-1">Intenta con otros términos de búsqueda</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Producto</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Precio</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Stock</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold uppercase tracking-wider">Estado</th>
+                    <th className="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {filtered.map((producto, index) => (
+                    <tr
+                      key={producto.id_producto}
+                      className={`hover:bg-slate-50 transition-colors duration-200 ${
+                        index % 2 === 0 ? "bg-white" : "bg-slate-50/50"
                       }`}
                     >
-                      {producto.activo ? "Activo" : "Inactivo"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2 flex gap-2">
-                    <button className="text-blue-600 hover:text-blue-800">
-                      <Pencil size={18} />
-                    </button>
-                    <button
-                      className={`${
-                        producto.activo ? "text-red-600" : "text-green-600"
-                      } hover:text-opacity-80 text-sm font-semibold`}
-                      onClick={() => toggleActivo(producto)}
-                    >
-                      {producto.activo ? "Desactivar" : "Activar"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </div>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center space-x-4">
+                          <div className="flex-shrink-0">
+                            <img
+                              src={producto.imagen_url || "/placeholder.svg?height=64&width=64&query=product"}
+                              alt={producto.nombre}
+                              className="w-16 h-16 object-cover rounded-xl border-2 border-slate-200 shadow-sm"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-semibold text-slate-900 truncate">{producto.nombre}</h3>
+                            <p className="text-sm text-slate-500 truncate max-w-xs">{producto.descripcion}</p>
+                            {producto.categoria_nombre && (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                                {producto.categoria_nombre}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="text-sm font-bold text-slate-900">
+                          ${Number(producto.precio).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                              producto.stock > 10
+                                ? "bg-green-100 text-green-800"
+                                : producto.stock > 0
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
+                            }`}
+                          >
+                            {producto.stock} unidades
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                              producto.activo
+                                ? "bg-green-100 text-green-800 border border-green-200"
+                                : "bg-red-100 text-red-800 border border-red-200"
+                            }`}
+                          >
+                            {producto.activo ? (
+                              <>
+                                <Eye className="w-3 h-3 mr-1" />
+                                Activo
+                              </>
+                            ) : (
+                              <>
+                                <EyeOff className="w-3 h-3 mr-1" />
+                                Inactivo
+                              </>
+                            )}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center space-x-3">
+                          <button className="flex items-center justify-center w-9 h-9 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition-all duration-200 hover:scale-105">
+                            <Pencil className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => toggleActivo(producto)}
+                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
+                              producto.activo
+                                ? "bg-red-100 hover:bg-red-200 text-red-700 border border-red-200"
+                                : "bg-green-100 hover:bg-green-200 text-green-700 border border-green-200"
+                            }`}
+                          >
+                            {producto.activo ? "Desactivar" : "Activar"}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
 
-      <div className="mt-6 flex justify-center gap-2">
-        {Array.from({ length: totalPages }).map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`w-3 h-3 rounded-full ${
-              currentPage === i + 1 ? "bg-[#1a4b7f]" : "bg-gray-300"
-            }`}
-          />
-        ))}
+        {/* Stats Footer */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Productos Activos</p>
+                <p className="text-2xl font-bold text-green-600">{productos.filter((p) => p.activo).length}</p>
+              </div>
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                <Eye className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Productos Inactivos</p>
+                <p className="text-2xl font-bold text-red-600">{productos.filter((p) => !p.activo).length}</p>
+              </div>
+              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                <EyeOff className="w-6 h-6 text-red-600" />
+              </div>
+            </div>
+          </div>
+          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-slate-600">Stock Total</p>
+                <p className="text-2xl font-bold text-blue-600">{productos.reduce((acc, p) => acc + p.stock, 0)}</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <Package className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AdminProducts;
+export default AdminProducts

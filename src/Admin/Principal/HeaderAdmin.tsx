@@ -35,7 +35,7 @@ function HeaderAdmin() {
     <div className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md shadow-sm text-[#0c2c4c] flex items-center py-1 px-2 h-[48px]">
       {/* Logo */}
       <div className="flex-none w-16 md:w-24 lg:w-28">
-        <Link to="/admin">
+        <Link to="/admin/administrador-dashboard" className="flex items-center">
           <img src={logo} alt="Logo" className="h-10 md:h-20" />
         </Link>
       </div>
@@ -58,8 +58,8 @@ function HeaderAdmin() {
         <div className="px-1 py-1 rounded-lg w-full md:w-auto bg-transparent">
           <ul className="flex flex-col md:flex-row gap-2 md:gap-4 text-xs sm:text-sm md:text-base font-bold uppercase">
             <li>
-              <Link to="/admin/pedidos" className="hover:text-gray-400 block py-1 md:py-0">
-                Pedidos
+              <Link to="/admin/Usuarios" className="hover:text-gray-400 block py-1 md:py-0">
+                Usuarios
               </Link>
             </li>
             <li>
@@ -69,7 +69,7 @@ function HeaderAdmin() {
             </li>
             <li>
               <Link to="/admin/catalogos" className="hover:text-gray-400 block py-1 md:py-0">
-                Catálogos
+                Categorías
               </Link>
             </li>
           </ul>

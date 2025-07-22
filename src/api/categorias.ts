@@ -1,5 +1,6 @@
 // User/api/categorias.ts
 import axios from "axios";
+const API_URL = "http://localhost:8888/api/categorias";
 
 export const obtenerCategorias = async () => {
   const res = await axios.get("http://localhost:8888/api/categorias");
@@ -37,4 +38,9 @@ export const eliminarCategoria = async (id: number, token: string) => {
     },
   });
   return res.data;
+};
+
+export const getCategorias = async () => {
+  const res = await axios.get(API_URL);
+  return res.data; // debe devolver un arreglo de categorías
 };

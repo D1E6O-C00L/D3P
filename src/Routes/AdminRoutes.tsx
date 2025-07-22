@@ -5,7 +5,7 @@ import { lazy, Suspense } from "react";
 const HeaderAdmin = lazy(() => import("../Admin/Principal/HeaderAdmin"));
 const AdminDashboard = lazy(() => import("../Admin/Principal/AdminDashboard"));
 const AdminProducts = lazy(() => import("../Admin/Productos/AdminProducts"));
-const AdminPedidos = lazy(() => import("../Admin/Pedidos/AdminPedidos"));
+const AdminPedidos = lazy(() => import("../Admin/Usuario/AdminUsuarios"));
 
 export default function AdminRoutes() {
   return (

@@ -199,7 +199,7 @@ const CheckoutForm = () => {
 
   const handleSuccessClose = () => {
     setShowSuccessModal(false);
-    window.location.href = "https://d3p-divine-design-print.sweet-travelcancun.com/";
+    window.location.href = "http://localhost:5173/";
   };
 
   return (
@@ -230,7 +230,10 @@ const CheckoutForm = () => {
           </h3>
           <div className="bg-gray-50 p-4 rounded-lg mt-4">
             {products.map((product: Product) => (
-              <div key={product.id_producto} className="flex justify-between mb-2">
+              <div
+                key={product.id_producto}
+                className="flex justify-between mb-2"
+              >
                 <span className="text-gray-600">{product.nombre}</span>
                 <span className="text-gray-600">
                   ${Number.parseFloat(product.precio).toFixed(2)} MXN

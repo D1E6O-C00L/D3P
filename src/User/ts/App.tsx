@@ -3,11 +3,11 @@ import "../../css/index.css";
 import "../../css/whatsapp.css";
 import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
 import WhatsAppIcon from "../../components/WhatsApp/WhatsAppIcon";
-import { useCurrency } from "../../context/CurrencyContext"; // 👈 importa contexto
+import { useCurrency } from "../../context/CurrencyContext"; 
 
 function Card() {
   const navigate = useNavigate();
-  const { currency, rate } = useCurrency(); // 👈 extrae la moneda y el tipo de cambio
+  const { currency, rate } = useCurrency(); 
 
   const handleButtonClick = () => {
     navigate("/selection");

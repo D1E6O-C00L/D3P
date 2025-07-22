@@ -3,11 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import Carousel from "./Carousel";
 import { ArrowLeft, EyeOff, Eye } from "lucide-react";
 import { useUser } from "../context/UserContext";
-import ModalAlert from "../../Modal/ModalAlert";
 import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { iniciarSesion } from "../../api/auth";
 import ReCAPTCHA from "react-google-recaptcha";
+import Swal from "sweetalert2";
 import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
 
 const Logo = `${BASE_CLOUDINARY}/v1751579321/logo_igthyq.svg`;
@@ -20,8 +20,6 @@ function Login() {
   const [correo, setCorreo] = useState("");
   const [contraseña, setContraseña] = useState("");
   const [mostrarContraseña, setMostrarContraseña] = useState(false);
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState("");
 
@@ -30,26 +28,28 @@ function Login() {
   const validarDominio = (email: string) =>
     /^[\w-.]+@(gmail\.com|upqroo\.edu\.mx)$/i.test(email);
 
-  /* ---------- LOGIN LOCAL ---------- */
+  const mostrarAlerta = (mensaje: string, tipo: "error" | "warning" | "success" = "error") => {
+    Swal.fire({
+      title: mensaje,
+      icon: tipo,
+      confirmButtonText: "Aceptar",
+      confirmButtonColor: "#1a4b7f",
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!correo || !contraseña) {
-      setAlertMessage("Por favor, completa todos los campos.");
-      setShowAlert(true);
-      return;
+      return mostrarAlerta("Por favor, completa todos los campos.", "warning");
     }
 
     if (!validarDominio(correo)) {
-      setAlertMessage("Solo se permiten correos @gmail.com o @upqroo.edu.mx");
-      setShowAlert(true);
-      return;
+      return mostrarAlerta("Solo se permiten correos @gmail.com o @upqroo.edu.mx", "warning");
     }
 
     if (!captchaToken) {
-      setAlertMessage("Por favor, verifica el reCAPTCHA.");
-      setShowAlert(true);
-      return;
+      return mostrarAlerta("Por favor, verifica el reCAPTCHA.", "warning");
     }
 
     try {
@@ -58,7 +58,6 @@ function Login() {
 
       if (response.success) {
         localStorage.setItem("token", response.token);
-        console.log("Token login tradicional:", response.token);
         setUser({
           id_usuario: response.usuario.id_usuario,
           nombre: response.usuario.nombre,
@@ -67,14 +66,12 @@ function Login() {
         });
         navigate("/");
       } else {
-        setAlertMessage(response.message || "Error al intentar iniciar sesión.");
-        setShowAlert(true);
+        mostrarAlerta(response.message || "Error al intentar iniciar sesión.");
         recaptchaRef.current?.reset();
         setCaptchaToken("");
       }
     } catch (error) {
-      setAlertMessage("Error al intentar iniciar sesión.");
-      setShowAlert(true);
+      mostrarAlerta("Error al intentar iniciar sesión.");
       recaptchaRef.current?.reset();
       setCaptchaToken("");
     } finally {
@@ -82,7 +79,6 @@ function Login() {
     }
   };
 
-  /* ---------- LOADER ---------- */
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-screen bg-white">
@@ -98,10 +94,8 @@ function Login() {
     );
   }
 
-  /* ---------- RENDER ---------- */
   return (
     <div className="min-h-screen bg-[#f6f8fa] flex flex-col">
-      {/* Back */}
       <header className="p-4">
         <Link
           to="/"
@@ -112,15 +106,12 @@ function Login() {
         </Link>
       </header>
 
-      {/* Card */}
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col md:flex-row">
-          {/* ---------- CARRUSEL ---------- */}
           <div className="w-full md:w-1/2 h-52 xs:h-64 md:h-auto">
             <Carousel />
           </div>
 
-          {/* ---------- FORM ---------- */}
           <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col items-center text-[#1a4b7f]">
             <h2 className="text-3xl md:text-4xl font-bold mb-3">Iniciar Sesión</h2>
             <img src={Logo} alt="Logo D3P" className="w-28 md:w-32 mb-3" />
@@ -132,7 +123,6 @@ function Login() {
               </Link>
             </p>
 
-            {/* ---------- FORMULARIO ---------- */}
             <form onSubmit={handleSubmit} className="w-full space-y-4">
               <input
                 type="email"
@@ -159,7 +149,6 @@ function Login() {
                 </button>
               </div>
 
-              {/* reCAPTCHA */}
               <ReCAPTCHA
                 sitekey={SITE_KEY}
                 ref={recaptchaRef}
@@ -175,27 +164,22 @@ function Login() {
               </button>
             </form>
 
-            {/* ---------- Google ---------- */}
             <div className="w-full mt-6 flex justify-center">
               <div className="w-full max-w-xs">
                 <GoogleLogin
                   onSuccess={({ credential }) => {
                     if (!credential) {
-                      setAlertMessage("No se pudo obtener el token de Google.");
-                      setShowAlert(true);
-                      return;
+                      return mostrarAlerta("No se pudo obtener el token de Google.");
                     }
+
                     const decoded: any = jwtDecode(credential);
                     const email = decoded.email;
+
                     if (!validarDominio(email)) {
-                      setAlertMessage(
-                        "Solo se permiten correos @gmail.com o @upqroo.edu.mx"
-                      );
-                      setShowAlert(true);
-                      return;
+                      return mostrarAlerta("Solo se permiten correos @gmail.com o @upqroo.edu.mx");
                     }
+
                     localStorage.setItem("token", credential);
-                    console.log("Token login Google:", credential);
                     setUser({
                       id_usuario: decoded.sub,
                       nombre: decoded.name,
@@ -204,10 +188,7 @@ function Login() {
                     });
                     navigate("/");
                   }}
-                  onError={() => {
-                    setAlertMessage("Error en el login de Google");
-                    setShowAlert(true);
-                  }}
+                  onError={() => mostrarAlerta("Error en el login de Google")}
                   useOneTap
                   shape="pill"
                   theme="filled_blue"
@@ -225,11 +206,6 @@ function Login() {
           </div>
         </div>
       </main>
-
-      {/* ---------- ALERT ---------- */}
-      {showAlert && (
-        <ModalAlert message={alertMessage} onClose={() => setShowAlert(false)} />
-      )}
     </div>
   );
 }
