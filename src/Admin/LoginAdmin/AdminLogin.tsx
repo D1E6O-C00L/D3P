@@ -1,8 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, ShieldCheck, ArrowLeft } from "lucide-react";
-import { GoogleLogin } from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
 import Swal from "sweetalert2";
 import ReCAPTCHA from "react-google-recaptcha";
 import { BASE_CLOUDINARY } from "../../assets/constants/cloudinary";
@@ -149,29 +147,6 @@ const AdminLogin = () => {
             Ingresar al Panel
           </button>
         </form>
-
-        <div className="w-full mt-6 flex justify-center">
-          <div className="w-full max-w-xs">
-            <GoogleLogin
-              onSuccess={({ credential }) => {
-                if (!credential) return;
-                const decoded: any = jwtDecode(credential);
-                if (!validarCorreoAdmin(decoded.email)) {
-                  return Swal.fire("Correo no válido", "Solo se permiten correos institucionales.", "error");
-                }
-
-                localStorage.setItem("admin_token", credential);
-                loginAdmin(credential);
-                navigate("/admin/administrador-dashboard");
-              }}
-              onError={() => Swal.fire("Error", "Error en el login de Google", "error")}
-              useOneTap
-              shape="pill"
-              theme="filled_blue"
-              size="large"
-            />
-          </div>
-        </div>
 
         <div className="mt-6 text-center">
           <button

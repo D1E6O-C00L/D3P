@@ -94,26 +94,29 @@ const AdminUsuarios = () => {
     }
   }
 
-  const handleChangeRole = async (id: number, currentRole: string) => {
-    const newRole = currentRole === "usuario" ? "admin" : "usuario" // Toggle between "admin" and "usuario"
-    try {
-      const token = localStorage.getItem("admin_token")
-      if (!token) {
-        Swal.fire("Error", "Token no disponible", "error")
-        return
-      }
-      const response = await cambiarRolUsuario(id, newRole, token)
-      if (response.success) {
-        Swal.fire("Rol actualizado", "", "success")
-        fetchUsuarios() // Recargar lista
-      } else {
-        Swal.fire("Error", response.message || "No se pudo cambiar el rol del usuario", "error")
-      }
-    } catch (error) {
-      console.error("Error al cambiar el rol:", error)
-      Swal.fire("Error", "No se pudo cambiar el rol del usuario", "error")
+const handleChangeRole = async (id: number, currentRole: string) => {
+  const newRole = currentRole === "usuario" ? "admin" : "usuario"; // Cambia el rol entre "admin" y "usuario"
+  try {
+    const token = localStorage.getItem("admin_token");
+    if (!token) {
+      Swal.fire("Error", "Token no disponible", "error"); // Si no hay token, muestra el error
+      return;
     }
+
+    const response = await cambiarRolUsuario(id, newRole, token);
+
+    if (response.success) {
+      fetchUsuarios(); // Recargar la lista de usuarios
+    } else {
+      // Si la respuesta no fue exitosa, mostrar error
+    }
+  } catch (error) {
+    console.error("Error al cambiar el rol:", error);
+    // Si hay un error en el proceso, mostrar mensaje de error
+    Swal.fire("Error", "No se pudo cambiar el rol del usuario", "error");
   }
+};
+
 
   useEffect(() => {
     fetchUsuarios()

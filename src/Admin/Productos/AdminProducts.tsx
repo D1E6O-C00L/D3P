@@ -1,8 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Search, Pencil, Package, Eye, EyeOff } from "lucide-react"
-import { getAllProducts, toggleProductoActivo } from "../../api/products"
+import { Search, Plus, Pencil, Eye, EyeOff, Package } from "lucide-react"
+import Swal from "sweetalert2"
+import { getAllProducts, toggleProductoActivo, createProduct, updateProduct } from "../../api/products"
+import { obtenerCategorias } from "../../api/categorias" // Importar la función para obtener categorías
+import Modal from "../../components/Admin/Modal"
 
 interface Producto {
   id_producto: number
@@ -11,8 +14,13 @@ interface Producto {
   precio: number | string
   stock: number
   imagen_url: string
-  categoria_nombre: string
+  categoria_id: number
   activo: boolean
+}
+
+interface Categoria {
+  id_categoria: number
+  nombre: string
 }
 
 const AdminProducts = () => {
@@ -21,6 +29,9 @@ const AdminProducts = () => {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [showSearch, setShowSearch] = useState(false)
+  const [openModal, setOpenModal] = useState(false)
+  const [productoSeleccionado, setProductoSeleccionado] = useState<Producto | null>(null)
+  const [categorias, setCategorias] = useState<Categoria[]>([]) // Estado para almacenar las categorías
 
   const fetchProductos = async () => {
     try {
@@ -32,6 +43,15 @@ const AdminProducts = () => {
       console.error("Error al cargar productos:", err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchCategorias = async () => {
+    try {
+      const res = await obtenerCategorias() // Llamada para obtener las categorías
+      setCategorias(res) // Almacena las categorías en el estado
+    } catch (err) {
+      console.error("Error al cargar categorías:", err)
     }
   }
 
@@ -60,8 +80,56 @@ const AdminProducts = () => {
     }
   }
 
+  const abrirModal = (producto: Producto | null) => {
+    setProductoSeleccionado(producto)
+    setOpenModal(true)
+  }
+
+  const cerrarModal = () => {
+    setOpenModal(false)
+    setProductoSeleccionado(null)
+  }
+
+const guardarCambios = async () => {
+  const token = localStorage.getItem("admin_token")
+  if (!token || !productoSeleccionado) return
+
+  try {
+    if (productoSeleccionado.id_producto === 0) {
+      // Crear nuevo producto
+      const res = await createProduct(
+        {
+          nombre: productoSeleccionado.nombre,
+          descripcion: productoSeleccionado.descripcion,
+          precio: productoSeleccionado.precio,
+          stock: productoSeleccionado.stock,
+          categoria_id: productoSeleccionado.categoria_id,
+          imagen_url: productoSeleccionado.imagen_url,
+        },
+        token
+
+      )
+      console.log(res);
+      if (res.success) {
+        Swal.fire("Producto creado", "Se agregó correctamente", "success")
+      } else {
+        Swal.fire("Error", res.message || "No se pudo crear el producto", "error")
+      }
+    }
+    cerrarModal()
+    fetchProductos()
+  } catch (error) {
+    console.error("Error al guardar:", error)
+    Swal.fire("Error", "No se pudo guardar el producto", "error")
+  }
+}
+
+
+
+
   useEffect(() => {
     fetchProductos()
+    fetchCategorias() // Cargar categorías al iniciar
   }, [])
 
   return (
@@ -84,23 +152,14 @@ const AdminProducts = () => {
                 <Search className="w-5 h-5 text-slate-600 group-hover:text-slate-800" />
               </button>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-slate-500 font-medium">
-                {filtered.length} producto{filtered.length !== 1 ? "s" : ""} encontrado
-                {filtered.length !== 1 ? "s" : ""}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-slate-600">
-                <Package className="w-4 h-4" />
-                <span className="font-medium">Total: {productos.length}</span>
-              </div>
+            <div className="text-sm text-slate-500 font-medium">
+              {filtered.length} producto{filtered.length !== 1 ? "s" : ""} encontrado
             </div>
           </div>
 
           {/* Search Bar */}
           <div
-            className={`transition-all duration-300 ease-in-out ${
-              showSearch ? "max-h-20 opacity-100 mt-6" : "max-h-0 opacity-0 mt-0"
-            } overflow-hidden`}
+            className={`transition-all duration-300 ease-in-out ${showSearch ? "max-h-20 opacity-100 mt-6" : "max-h-0 opacity-0 mt-0"} overflow-hidden`}
           >
             <div className="relative max-w-md">
               <input
@@ -148,9 +207,7 @@ const AdminProducts = () => {
                   {filtered.map((producto, index) => (
                     <tr
                       key={producto.id_producto}
-                      className={`hover:bg-slate-50 transition-colors duration-200 ${
-                        index % 2 === 0 ? "bg-white" : "bg-slate-50/50"
-                      }`}
+                      className={`hover:bg-slate-50 transition-colors duration-200 ${index % 2 === 0 ? "bg-white" : "bg-slate-50/50"}`}
                     >
                       <td className="px-6 py-4">
                         <div className="flex items-center space-x-4">
@@ -164,9 +221,9 @@ const AdminProducts = () => {
                           <div className="flex-1 min-w-0">
                             <h3 className="text-sm font-semibold text-slate-900 truncate">{producto.nombre}</h3>
                             <p className="text-sm text-slate-500 truncate max-w-xs">{producto.descripcion}</p>
-                            {producto.categoria_nombre && (
+                            {producto.categoria_id && (
                               <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
-                                {producto.categoria_nombre}
+                                {producto.categoria_id}
                               </span>
                             )}
                           </div>
@@ -217,9 +274,12 @@ const AdminProducts = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center justify-center space-x-3">
-                          <button className="flex items-center justify-center w-9 h-9 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition-all duration-200 hover:scale-105">
+                           {/* <button
+                            onClick={() => abrirModal(producto)}
+                            className="flex items-center justify-center w-9 h-9 bg-blue-100 hover:bg-blue-200 text-blue-600 rounded-lg transition-all duration-200 hover:scale-105"
+                          >
                             <Pencil className="w-4 h-4" />
-                          </button>
+                          </button> */}
                           <button
                             onClick={() => toggleActivo(producto)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-105 ${
@@ -240,42 +300,119 @@ const AdminProducts = () => {
           )}
         </div>
 
-        {/* Stats Footer */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Productos Activos</p>
-                <p className="text-2xl font-bold text-green-600">{productos.filter((p) => p.activo).length}</p>
-              </div>
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                <Eye className="w-6 h-6 text-green-600" />
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Productos Inactivos</p>
-                <p className="text-2xl font-bold text-red-600">{productos.filter((p) => !p.activo).length}</p>
-              </div>
-              <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                <EyeOff className="w-6 h-6 text-red-600" />
-              </div>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-600">Stock Total</p>
-                <p className="text-2xl font-bold text-blue-600">{productos.reduce((acc, p) => acc + p.stock, 0)}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Package className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-        </div>
+{/* Modal */}
+<Modal
+  open={openModal}
+  onClose={cerrarModal}
+  title={"Nuevo Producto"}
+  footer={
+    <div className="flex gap-3 pt-6 border-t border-slate-200">
+      <button
+        onClick={cerrarModal}
+        className="flex-1 px-6 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-xl transition-all duration-200"
+      >
+        Cancelar
+      </button>
+      <button
+        onClick={guardarCambios} // Guardar solo para creación
+        className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition-all duration-200 shadow-lg shadow-blue-600/25"
+      >
+        Guardar
+      </button>
+    </div>
+  }
+>
+  <div className="space-y-6">
+    {/* Nombre */}
+    <div>
+      <label className="block text-sm font-semibold text-slate-700 mb-2">Nombre</label>
+      <input
+        type="text"
+        value={productoSeleccionado?.nombre || ""}
+        onChange={(e) =>
+          setProductoSeleccionado((prev) => (prev ? { ...prev, nombre: e.target.value } : null))
+        }
+        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition-all duration-200"
+        placeholder="Ingresa el nombre del producto"
+      />
+    </div>
+
+    {/* Descripción */}
+    <div>
+      <label className="block text-sm font-semibold text-slate-700 mb-2">Descripción</label>
+      <textarea
+        value={productoSeleccionado?.descripcion || ""}
+        onChange={(e) =>
+          setProductoSeleccionado((prev) => (prev ? { ...prev, descripcion: e.target.value } : null))
+        }
+        rows={4}
+        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition-all duration-200 resize-none"
+        placeholder="Describe el producto..."
+      />
+    </div>
+
+    {/* Precio */}
+    <div>
+      <label className="block text-sm font-semibold text-slate-700 mb-2">Precio</label>
+      <input
+        type="number"
+        value={productoSeleccionado?.precio || ""}
+        onChange={(e) =>
+          setProductoSeleccionado((prev) => (prev ? { ...prev, precio: parseFloat(e.target.value) } : null))
+        }
+        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition-all duration-200"
+        placeholder="Ingresa el precio del producto"
+      />
+    </div>
+
+    {/* Stock */}
+    <div>
+      <label className="block text-sm font-semibold text-slate-700 mb-2">Stock</label>
+      <input
+        type="number"
+        value={productoSeleccionado?.stock || ""}
+        onChange={(e) =>
+          setProductoSeleccionado((prev) => (prev ? { ...prev, stock: parseInt(e.target.value) } : null))
+        }
+        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition-all duration-200"
+        placeholder="Cantidad en stock"
+      />
+    </div>
+
+    {/* Categoría */}
+    <div>
+      <label className="block text-sm font-semibold text-slate-700 mb-2">Categoría</label>
+      <select
+        value={productoSeleccionado?.categoria_id || ""}
+        onChange={(e) =>
+          setProductoSeleccionado((prev) => (prev ? { ...prev, categoria_id: parseInt(e.target.value) } : null))
+        }
+        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition-all duration-200"
+      >
+        {categorias.map((categoria) => (
+          <option key={categoria.id_categoria} value={categoria.id_categoria}>
+            {categoria.nombre}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* URL de Imagen */}
+    <div>
+      <label className="block text-sm font-semibold text-slate-700 mb-2">URL de Imagen</label>
+      <input
+        type="text"
+        value={productoSeleccionado?.imagen_url || ""}
+        onChange={(e) =>
+          setProductoSeleccionado((prev) => (prev ? { ...prev, imagen_url: e.target.value } : null))
+        }
+        className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-700 transition-all duration-200"
+        placeholder="Ingresa la URL de la imagen del producto"
+      />
+    </div>
+  </div>
+</Modal>
+
       </div>
     </div>
   )
